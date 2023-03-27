@@ -18,7 +18,7 @@ typedef struct HTentry {
 	HTpointer next; //pointer to next identifier
 } HTentry;
 
-enum errorTypes { noerror, illsp, illid, overst };
+enum errorTypes { noerror, illsp, illid, overst, toolong };
 typedef enum errorTypes ERRORtypes;
 
 char seperators[] = " .,;:?!\t\n";
@@ -114,6 +114,13 @@ void PrintError(ERRORtypes err)
 				input = fgetc(fp);
 			}
 			printf(" start with digit \n");
+			break;
+		case toolong:
+			printf("...Error...");
+			for (int i = nextid; i < nextfree; i++) {
+                printf("%c", input);
+            }
+            printf(" too long identifier \n");
 			break;
 		case noerror:
 			break;
