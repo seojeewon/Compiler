@@ -1,0 +1,3 @@
+This is test data for the hashtable assignment
+X X Y X X X abc acb aBc
+2abc if < =
