@@ -43,7 +43,7 @@ char input;
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen(FILE_NAME, "r");
+	fp = fopen("testdata.txt", "r");
 	input = fgetc(fp);
 }
 
@@ -66,7 +66,7 @@ void PrintHeading() {
 	printf("\n");
 }
 
-/* ¼­¿µ
+/* ï¿½ï¿½ï¿½ï¿½
    PrintHStable - Prints the hash table.write out the hashcode and the list of identifiers
    associated with each hashcode,but only for non-empty lists.
    Print out the number of characters used up in ST.*/
@@ -90,7 +90,7 @@ void PrintHStable()
 	printf("\n\n\n < %5d characters are used in the string table >\n", nextfree);
 }
 
-/* È¿Áø
+/* È¿ï¿½ï¿½
    PrintError - Print out error messages
    overst : overflow in ST
    print the hashtable and abort by calling the function "abort()".
@@ -115,10 +115,12 @@ void PrintError(ERRORtypes err)
 			}
 			printf(" start with digit \n");
 			break;
+		case noerror:
+			break;
 	}
 }
 
-/* Áö¿ø
+/* ï¿½ï¿½ï¿½ï¿½
    Skip Seperators - skip over strings of spaces, tabs, newlines, ., ; : ? !
    if illegal seperators,print out error message. */
 void SkipSeperators() {
@@ -131,7 +133,7 @@ void SkipSeperators() {
 	}
 }
 
-/* Áö¿ø
+/* ï¿½ï¿½ï¿½ï¿½
    ReadID - Read identifier from the input file the string table ST directly into
    ST(append it to the previous identifier).
    An identifier is a string of letters and digits, starting with a letter.
@@ -155,7 +157,7 @@ void ReadID()
 	}
 }
 
-/* ¼­¿µ
+/* ï¿½ï¿½ï¿½ï¿½
    ComputeHS - Compute the hash code of identifier by summing the ordinal values of its
    characters and then taking the sum modulo the size of HT. */
 void ComputeHS(int nid, int nfree)
@@ -168,7 +170,7 @@ void ComputeHS(int nid, int nfree)
 	hashcode = code % HTsize;
 }
 
-/* È¿¿ø
+/* È¿ï¿½ï¿½
    LookupHS - For each identifier, Look it up in the hashtable for previous occurrence
    of the identifier.If find a match, set the found flag as true.
    Otherwise flase.
@@ -188,7 +190,7 @@ void LookupHS(int nid, int hscode)
 			sameid = i;
 
 			while (ST[i] != '\0' && ST[j] != '\0' && found == TRUE) {
-				if (ST[i] != ST[i])
+				if (ST[i] != ST[j])
 					found = FALSE;
 				else {
 					i++;
@@ -200,7 +202,7 @@ void LookupHS(int nid, int hscode)
 	}
 }
 
-/* È¿¿ø
+/* È¿ï¿½ï¿½
    ADDHT - Add a new identifier to the hash table.
    If list head ht[hashcode] is null, simply add a list element with
    starting index of the identifier in ST.
@@ -215,7 +217,7 @@ void ADDHT(int hscode)
 	HT[hscode] = ptr;
 }
 
-/* È¿Áø
+/* È¿ï¿½ï¿½
 MAIN - Read the identifier from the file directly into ST.
 Compute its hashcode.
 Look up the idetifier in hashtable HT[hashcode]
