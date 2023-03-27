@@ -85,9 +85,10 @@ void PrintHStable()
 					printf("%c", ST[j++]);
 				printf("  ");
 			}
+			printf("\n");
 		}
 	}
-	printf("\n\n\n < %5d characters are used in the string table >\n", nextfree);
+	printf("\n\n <%dcharacters are used in the string table>\n", nextfree);
 }
 
 /* ȿ��
@@ -167,14 +168,21 @@ void ReadID()
 /* ����
    ComputeHS - Compute the hash code of identifier by summing the ordinal values of its
    characters and then taking the sum modulo the size of HT. */
-void ComputeHS(int nid, int nfree)
-{
-	int code;
-	code = 0;
-	for (int i = nid; i < nfree - 1; i++) {
-		code += (int)ST[i];
-	}
-	hashcode = code % HTsize;
+void ComputeHS( int nid, int nfree ){ 
+	int code=0;
+	char ch;
+	for(int i=nid; i<nfree;i++){
+		if((ST[i]>='A')&&( ST[i]<='Z')){
+			ch=ST[i]-'A'+'a';
+			
+		}
+		else{
+		    ch=ST[i];
+		}
+		code+=(int)ch;
+		
+	}  
+	hashcode=(code%HTsize)+1;
 }
 
 /* ȿ��
