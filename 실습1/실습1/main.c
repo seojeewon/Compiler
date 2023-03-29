@@ -38,6 +38,7 @@ ERRORtypes err;
 
 FILE* fp; //to be a pointer to FILE
 char input;
+char err_input;
 
 int issame = FALSE;
 
@@ -45,7 +46,7 @@ int issame = FALSE;
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen("testdata4.txt", "r");
+	fp = fopen("testdata.txt", "r");
 	input = fgetc(fp);
 }
 
@@ -63,7 +64,7 @@ int isSeperator(char c) {
 void PrintHeading() {
 	printf("\n\n");
 	printf(" -----------         -----------\n");
-	printf(" Index in ST            identifier \n");
+	printf(" Index in ST         identifier \n");
 	printf(" -----------         -----------\n");
 	printf("\n");
 }
@@ -100,34 +101,34 @@ void PrintHStable()
    illid : illegal identifier
    illsp : illegal seperator
    toolong : too long identifier*/
-void PrintError(ERRORtypes err)
+void PrintError(ERRORtypes err, char* str)
 {
 	switch (err) {
-		case overst:
-			printf("...Error...  OVERFLOW ");
-			PrintHStable();
-			exit(0);
-			break;
-		case illsp:
-			printf("...Error...  %c is illegal seperator \n", input);
-			break;
-		case illid:
-			printf("...Error... ");
-			while (input != EOF && (isLetter(input) || isDigit(input))) {
-				printf("%c", input);
-				input = fgetc(fp);
-			}
-			printf(" start with digit \n");
-			break;
-		case toolong:
-			printf("...Error...");
-			for (int i = nextid; i < nextfree-1; i++) {
-                printf("%c", ST[i]);
-            }
-            printf(" too long identifier \n");
-			break;
-		case noerror:
-			break;
+	case overst:
+		printf("...Error...  OVERFLOW ");
+		PrintHStable();
+		exit(0);
+		break;
+	case illsp:
+		printf("...Error...  %s   %c is illegal seperator \n", str, err_input);
+		break;
+	case illid:
+		printf("...Error... ");
+		while (input != EOF && (isLetter(input) || isDigit(input))) {
+			printf("%c", input);
+			input = fgetc(fp);
+		}
+		printf(" start with digit \n");
+		break;
+	case toolong:
+		printf("...Error...");
+		for (int i = nextid; i < nextfree; i++) {
+			printf("%c", input);
+		}
+		printf(" too long identifier \n");
+		break;
+	case noerror:
+		break;
 	}
 }
 
@@ -137,8 +138,18 @@ void PrintError(ERRORtypes err)
 void SkipSeperators() {
 	while (input != EOF && !(isLetter(input) || isDigit(input))) {
 		if (!isSeperator(input)) {
+			err_input = input;
+			char* str = malloc(sizeof(char) * 50);
+			int idx = 0;
+			str[idx++] = input;
+			while (!isSeperator(input)) {
+				input = fgetc(fp);
+				str[idx++] = input;
+			}
+			str[idx] = '\0';
 			err = illsp;
-			PrintError(err);
+			PrintError(err, str);
+			return;
 		}
 		input = fgetc(fp);
 	}
@@ -154,13 +165,16 @@ void ReadID()
 	nextid = nextfree;
 	if (isDigit(input)) {
 		err = illid;
-		PrintError(err);
+		PrintError(err, NULL);
 	}
 	else {
-		while (input != EOF && (isLetter(input) || isDigit(input))) {
+		while (input != EOF && !isSeperator(input)) {
+			if (!(isLetter(input) || isDigit(input))) {
+				err = illsp;
+			}
 			if (nextfree == STsize) {
 				err = overst;
-				PrintError(err);
+				PrintError(err, NULL);
 			}
 			ST[nextfree++] = input;
 			input = fgetc(fp);
@@ -171,22 +185,22 @@ void ReadID()
 /* 서영
    ComputeHS - Compute the hash code of identifier by summing the ordinal values of its
    characters and then taking the sum modulo the size of HT. */
-void ComputeHS( int nid, int nfree ){ 
-	int code=0;
+void ComputeHS(int nid, int nfree) {
+	int code = 0;
 	char ch;
-	for(int i=nid; i<nfree;i++){
-		if((ST[i]>='A')&&( ST[i]<='Z')){
-			ch=ST[i]-'A'+'a';
-			
+	for (int i = nid; i < nfree; i++) {
+		if ((ST[i] >= 'A') && (ST[i] <= 'Z')) {
+			ch = ST[i] - 'A' + 'a';
+
 		}
-		else{
-		  ch=ST[i];
+		else {
+			ch = ST[i];
 		}
-		code+=(int)ch;
-		
-	}  
-	hashcode=(code%HTsize)+1;
-	if(hashcode == 100) hashcode = 0;
+		code += (int)ch;
+
+	}
+	hashcode = (code % HTsize) + 1;
+	if (hashcode == 100) hashcode = 0;
 }
 
 /* 효원
@@ -209,7 +223,7 @@ void LookupHS(int nid, int hscode)
 			sameid = i;
 
 			while (ST[i] != '\0' && ST[j] != '\0' && found == TRUE) {
-				if (ST[i] != ST[j]){
+				if (ST[i] != ST[j]) {
 					found = FALSE;
 				}
 				else {
@@ -238,17 +252,17 @@ void ADDHT(int hscode)
 }
 
 // 
-void isUpperSameExist(int hscode, char* word){
+void isUpperSameExist(int hscode, char* word) {
 	HTpointer here;
 
 	issame = FALSE;
 	for (int i = 0; i < HTsize; i++) {
-		if(i == hscode){
+		if (i == hscode) {
 			for (here = HT[i]; here != NULL && issame == FALSE; here = here->next) {
 				int j = here->index;
-				int idx=0;
+				int idx = 0;
 				while (ST[j] != '\0' && j < STsize)
-					if(toupper(ST[j++]) != toupper(word[idx++])) {
+					if (toupper(ST[j++]) != toupper(word[idx++])) {
 						issame = FALSE;
 						break;
 					}
@@ -277,10 +291,11 @@ int main() {
 		err = noerror;
 		SkipSeperators();
 		ReadID();
+		
 		if (input != EOF && err != illid) {
 			if (nextfree == STsize) {
 				err = overst;
-				PrintError(err);
+				PrintError(err, NULL);
 			}
 			ST[nextfree++] = '\0';
 
@@ -289,14 +304,14 @@ int main() {
 
 			if (!found) {
 				printf("%6d      ", nextid);
-				char *str = malloc(sizeof(char) * 12);
-				int idx=0;
+				char* str = malloc(sizeof(char) * 12);
+				int idx = 0;
 				for (i = nextid; i < nextfree - 1; i++) {
 					printf("%c", ST[i]);
 					str[idx++] = ST[i];
 				}
 				isUpperSameExist(hashcode, str);
-				if(issame) printf("       (already existed)\n");
+				if (issame) printf("       (already existed)\n");
 				else printf("       (entered)\n");
 				ADDHT(hashcode);
 			}
