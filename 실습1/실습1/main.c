@@ -40,6 +40,8 @@ FILE* fp; //to be a pointer to FILE
 char input;
 char err_input;
 
+void checkHT();
+
 //Initialize - open input file
 void initialize()
 {
@@ -47,6 +49,7 @@ void initialize()
 	input = fgetc(fp);
 }
 
+//지원
 int isSeperator(char c) {
 	int sep_len;
 
@@ -58,6 +61,7 @@ int isSeperator(char c) {
 	return 0;
 }
 
+//효진
 void PrintHeading() {
 	printf("\n\n");
 	printf(" -----------            -----------\n");
@@ -143,14 +147,13 @@ void SkipSeperators() {
 			
 			while (TRUE) {
 				input = fgetc(fp);
-				if (isSeperator(input)) break;
+				if (isSeperator(input) || input==EOF) break;
 				str[idx++] = input;
 			}
 			
 			str[idx] = '\0';
 			err = illsp;
 			PrintError(err, str);
-			//return;
 		}
 		input = fgetc(fp);
 	}
@@ -165,24 +168,35 @@ void ReadID()
 {
 	err = noerror;
 	nextid = nextfree;
+	if (input == EOF) {
+		return;
+	}
 	if (isDigit(input)) {
 		err = illid;
 		PrintError(err, NULL);
 	}
 	else {
+		int flag = 0;
 		while (input != EOF && (!isSeperator(input))) {
 			if (nextfree == STsize) {
 				err = overst;
 				PrintError(err, NULL);
 			}
-			if (!isDigit(input) && !isLetter(input)) {
+			if ((!isDigit(input) && !isLetter(input)) && !flag) {
+				flag = 1;
 				err_input = input;
 				err = illsp;
 				
 			}
 			ST[nextfree++] = input;
 			input = fgetc(fp);
+			
 		}
+		
+		if (input == EOF && err != illsp) {	//ReadID내에서 input 읽다가 EOF 읽은 경우, 그 전까지 읽은 
+			checkHT();
+		}
+		
 		if (err == illsp) {
 			char* str = malloc(sizeof(char) * 50);
 			int i;
@@ -270,6 +284,33 @@ void ADDHT(int hscode)
 	HT[hscode] = ptr;
 }
 
+//지원
+void checkHT() {
+	if (nextfree == STsize) {
+		err = overst;
+		PrintError(err, NULL);
+	}
+	ST[nextfree++] = '\0';
+
+	ComputeHS(nextid, nextfree);
+	LookupHS(nextid, hashcode);
+
+	if (!found) {
+		printf("%6d      \t\t", nextid);
+		for (int i = nextid; i < nextfree - 1; i++) {
+			printf("%c", ST[i]);
+		}
+		printf("       \t(entered)\n");
+		ADDHT(hashcode);
+	}
+	else {
+		printf("%6d      \t\t", sameid);
+		for (int i = nextid; i < nextfree; i++)
+			printf("%c", ST[i]);
+		printf("       \t(already existed)\n");
+		nextfree = nextid;
+	}
+}
 
 
 /* 효진
@@ -283,7 +324,6 @@ Print the identifier,its index in ST, and whether it was entered or present.
 Print out the hashtable,and number of characters used up in ST
 */
 int main() {
-	int i;
 	PrintHeading();
 	initialize();
 
@@ -293,30 +333,7 @@ int main() {
 		ReadID();
 		
 		if (input != EOF && err != illid && err!=toolong && err != illsp) {
-			if (nextfree == STsize) {
-				err = overst;
-				PrintError(err, NULL);
-			}
-			ST[nextfree++] = '\0';
-
-			ComputeHS(nextid, nextfree);
-			LookupHS(nextid, hashcode);
-
-			if (!found) {
-				printf("%6d      \t\t", nextid);
-				for (i = nextid; i < nextfree - 1; i++) {
-					printf("%c", ST[i]);
-				}
-				printf("       \t(entered)\n");
-				ADDHT(hashcode);
-			}
-			else {
-				printf("%6d      \t\t", sameid);
-				for (i = nextid; i < nextfree; i++)
-					printf("%c", ST[i]);
-				printf("       \t(already existed)\n");
-				nextfree = nextid;
-			}
+			checkHT();
 		}
 	}
 	PrintHStable();
