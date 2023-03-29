@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define FILE_NAME "testdata.txt"
 #define STsize 1000 //size of string table
@@ -38,12 +39,13 @@ ERRORtypes err;
 FILE* fp; //to be a pointer to FILE
 char input;
 
+int issame = FALSE;
 
 
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen("testdata.txt", "r");
+	fp = fopen("testdata4.txt", "r");
 	input = fgetc(fp);
 }
 
@@ -109,7 +111,7 @@ void PrintError(ERRORtypes err)
 			printf("...Error...  %c is illegal seperator \n", input);
 			break;
 		case illid:
-			printf("...Error...");
+			printf("...Error... ");
 			while (input != EOF && (isLetter(input) || isDigit(input))) {
 				printf("%c", input);
 				input = fgetc(fp);
@@ -177,12 +179,13 @@ void ComputeHS( int nid, int nfree ){
 			
 		}
 		else{
-		    ch=ST[i];
+		  ch=ST[i];
 		}
 		code+=(int)ch;
 		
 	}  
 	hashcode=(code%HTsize)+1;
+	if(hashcode == 100) hashcode = 0;
 }
 
 /* ȿ��
@@ -205,8 +208,9 @@ void LookupHS(int nid, int hscode)
 			sameid = i;
 
 			while (ST[i] != '\0' && ST[j] != '\0' && found == TRUE) {
-				if (ST[i] != ST[j])
+				if (ST[i] != ST[j]){
 					found = FALSE;
+				}
 				else {
 					i++;
 					j++;
@@ -230,6 +234,27 @@ void ADDHT(int hscode)
 	ptr->index = nextid;
 	ptr->next = HT[hscode];
 	HT[hscode] = ptr;
+}
+
+// 
+void isUpperSameExist(int hscode, char* word){
+	HTpointer here;
+
+	issame = FALSE;
+	for (int i = 0; i < HTsize; i++) {
+		if(i == hscode){
+			for (here = HT[i]; here != NULL && issame == FALSE; here = here->next) {
+				int j = here->index;
+				int idx=0;
+				while (ST[j] != '\0' && j < STsize)
+					if(toupper(ST[j++]) != toupper(word[idx++])) {
+						issame = FALSE;
+						break;
+					}
+					else issame = TRUE;
+			}
+		}
+	}
 }
 
 /* ȿ��
@@ -263,10 +288,15 @@ int main() {
 
 			if (!found) {
 				printf("%6d      ", nextid);
+				char *str = malloc(sizeof(char) * 12);
+				int idx=0;
 				for (i = nextid; i < nextfree - 1; i++) {
 					printf("%c", ST[i]);
+					str[idx++] = ST[i];
 				}
-				printf("       (entered)\n");
+				isUpperSameExist(hashcode, str);
+				if(issame) printf("       (already existed)\n");
+				else printf("       (entered)\n");
 				ADDHT(hashcode);
 			}
 			else {
