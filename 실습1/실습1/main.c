@@ -306,6 +306,7 @@ int main() {
 				printf("%6d      ", nextid);
 				char* str = malloc(sizeof(char) * 12);
 				int idx = 0;
+				printf("         ");
 				for (i = nextid; i < nextfree - 1; i++) {
 					printf("%c", ST[i]);
 					str[idx++] = ST[i];
