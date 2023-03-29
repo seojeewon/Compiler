@@ -107,7 +107,7 @@ void PrintError(ERRORtypes err, char* str)
 		exit(0);
 		break;
 	case illsp:
-		printf("...Error...  %s  %c is not allowed \n", str, input);
+		printf("...Error...  %s  %c is not allowed \n", str, err_input);
 		break;
 	case illid:
 		printf("...Error... ");
@@ -140,13 +140,17 @@ void SkipSeperators() {
 			char* str = malloc(sizeof(char) * 50);
 			int idx = 0;
 			str[idx++] = input;
-			while (!isSeperator(input)) {
+			
+			while (TRUE) {
 				input = fgetc(fp);
+				if (isSeperator(input)) break;
 				str[idx++] = input;
 			}
+			
 			str[idx] = '\0';
 			err = illsp;
 			PrintError(err, str);
+			//return;
 		}
 		input = fgetc(fp);
 	}
@@ -159,19 +163,37 @@ void SkipSeperators() {
    If first letter is digit, print out error message. */
 void ReadID()
 {
+	err = noerror;
 	nextid = nextfree;
 	if (isDigit(input)) {
 		err = illid;
 		PrintError(err, NULL);
 	}
 	else {
-		while (input != EOF && (isLetter(input) || isDigit(input))) {
+		while (input != EOF && (!isSeperator(input))) {
 			if (nextfree == STsize) {
 				err = overst;
 				PrintError(err, NULL);
 			}
+			if (!isDigit(input) && !isLetter(input)) {
+				err_input = input;
+				err = illsp;
+				
+			}
 			ST[nextfree++] = input;
 			input = fgetc(fp);
+		}
+		if (err == illsp) {
+			char* str = malloc(sizeof(char) * 50);
+			int i;
+			for (i = nextid; i < nextfree; i++) {
+				str[i - nextid] = ST[i];
+			}
+			str[i - nextid] = '\0';
+			PrintError(err, str);
+			free(str);
+			nextfree = nextid;
+			return;
 		}
 		if (nextfree - nextid > 12) {
 			err = toolong;
@@ -269,7 +291,8 @@ int main() {
 		err = noerror;
 		SkipSeperators();
 		ReadID();
-		if (input != EOF && err != illid) {
+		
+		if (input != EOF && err != illid && err!=toolong) {
 			if (nextfree == STsize) {
 				err = overst;
 				PrintError(err, NULL);
