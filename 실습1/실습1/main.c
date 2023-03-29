@@ -38,12 +38,12 @@ ERRORtypes err;
 
 FILE* fp; //to be a pointer to FILE
 char input;
-
+char err_input;
 
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen("testdata4.txt", "r");
+	fp = fopen("testdata.txt", "r");
 	input = fgetc(fp);
 }
 
@@ -98,34 +98,34 @@ void PrintHStable()
    illid : illegal identifier
    illsp : illegal seperator
    toolong : too long identifier*/
-void PrintError(ERRORtypes err)
+void PrintError(ERRORtypes err, char* str)
 {
 	switch (err) {
-		case overst:
-			printf("...Error...  OVERFLOW ");
-			PrintHStable();
-			exit(0);
-			break;
-		case illsp:
-			printf("...Error...  %c is not allowed \n", input);
-			break;
-		case illid:
-			printf("...Error... ");
-			while (input != EOF && (isLetter(input) || isDigit(input))) {
-				printf("%c", input);
-				input = fgetc(fp);
-			}
-			printf(" start with digit \n");
-			break;
-		case toolong:
-			printf("...Error...");
-			for (int i = nextid; i < nextfree; i++) {
-                printf("%c", input);
-            }
-            printf(" too long identifier \n");
-			break;
-		case noerror:
-			break;
+	case overst:
+		printf("...Error...  OVERFLOW ");
+		PrintHStable();
+		exit(0);
+		break;
+	case illsp:
+		printf("...Error...  %s  %c is not allowed \n", str, input);
+		break;
+	case illid:
+		printf("...Error... ");
+		while (input != EOF && (isLetter(input) || isDigit(input))) {
+			printf("%c", input);
+			input = fgetc(fp);
+		}
+		printf(" start with digit \n");
+		break;
+	case toolong:
+		printf("...Error...");
+		for (int i = nextid; i < nextfree; i++) {
+			printf("%c", input);
+		}
+		printf(" too long identifier \n");
+		break;
+	case noerror:
+		break;
 	}
 }
 
@@ -135,8 +135,17 @@ void PrintError(ERRORtypes err)
 void SkipSeperators() {
 	while (input != EOF && !(isLetter(input) || isDigit(input))) {
 		if (!isSeperator(input)) {
+			err_input = input;
+			char* str = malloc(sizeof(char) * 50);
+			int idx = 0;
+			str[idx++] = input;
+			while (!isSeperator(input)) {
+				input = fgetc(fp);
+				str[idx++] = input;
+			}
+			str[idx] = '\0';
 			err = illsp;
-			PrintError(err);
+			PrintError(err, str);
 		}
 		input = fgetc(fp);
 	}
@@ -152,13 +161,13 @@ void ReadID()
 	nextid = nextfree;
 	if (isDigit(input)) {
 		err = illid;
-		PrintError(err);
+		PrintError(err, NULL);
 	}
 	else {
 		while (input != EOF && (isLetter(input) || isDigit(input))) {
 			if (nextfree == STsize) {
 				err = overst;
-				PrintError(err);
+				PrintError(err, NULL);
 			}
 			ST[nextfree++] = input;
 			input = fgetc(fp);
@@ -169,22 +178,22 @@ void ReadID()
 /* 서영
    ComputeHS - Compute the hash code of identifier by summing the ordinal values of its
    characters and then taking the sum modulo the size of HT. */
-void ComputeHS( int nid, int nfree ){ 
-	int code=0;
+void ComputeHS(int nid, int nfree) {
+	int code = 0;
 	char ch;
-	for(int i=nid; i<nfree;i++){
-		if((ST[i]>='A')&&( ST[i]<='Z')){
-			ch=ST[i]-'A'+'a';
-			
+	for (int i = nid; i < nfree; i++) {
+		if ((ST[i] >= 'A') && (ST[i] <= 'Z')) {
+			ch = ST[i] - 'A' + 'a';
+
 		}
-		else{
-		  ch=ST[i];
+		else {
+			ch = ST[i];
 		}
-		code+=(int)ch;
-		
-	}  
-	hashcode=(code%HTsize)+1;
-	if(hashcode == 100) hashcode = 0;
+		code += (int)ch;
+
+	}
+	hashcode = (code % HTsize) + 1;
+	if (hashcode == 100) hashcode = 0;
 }
 
 /* 효원
@@ -258,7 +267,7 @@ int main() {
 		if (input != EOF && err != illid) {
 			if (nextfree == STsize) {
 				err = overst;
-				PrintError(err);
+				PrintError(err, NULL);
 			}
 			ST[nextfree++] = '\0';
 
