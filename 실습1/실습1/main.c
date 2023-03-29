@@ -60,9 +60,9 @@ int isSeperator(char c) {
 
 void PrintHeading() {
 	printf("\n\n");
-	printf(" -----------         -----------\n");
-	printf(" Index in ST         identifier \n");
-	printf(" -----------         -----------\n");
+	printf(" -----------            -----------\n");
+	printf(" Index in ST            identifier \n");
+	printf(" -----------            -----------\n");
 	printf("\n");
 }
 
@@ -107,7 +107,7 @@ void PrintError(ERRORtypes err, char* str)
 		exit(0);
 		break;
 	case illsp:
-		printf("...Error...  %s  %c is not allowed \n", str, err_input);
+		printf("...Error... \t\t%s       \t%c is not allowed \n", str, err_input);
 		break;
 	case illid:
 		printf("...Error... ");
@@ -118,11 +118,11 @@ void PrintError(ERRORtypes err, char* str)
 		printf(" start with digit \n");
 		break;
 	case toolong:
-		printf("...Error...");
+		printf("...Error... \t\t");
 		for (int i = nextid; i < nextfree; i++) {
 			printf("%c", ST[i]);
 		}
-		printf(" too long identifier \n");
+		printf("       \ttoo long identifier \n");
 		nextfree = nextid;
 		break;
 	case noerror:
@@ -292,7 +292,7 @@ int main() {
 		SkipSeperators();
 		ReadID();
 		
-		if (input != EOF && err != illid && err!=toolong) {
+		if (input != EOF && err != illid && err!=toolong && err != illsp) {
 			if (nextfree == STsize) {
 				err = overst;
 				PrintError(err, NULL);
@@ -303,18 +303,18 @@ int main() {
 			LookupHS(nextid, hashcode);
 
 			if (!found) {
-				printf("%6d      ", nextid);
+				printf("%6d      \t\t", nextid);
 				for (i = nextid; i < nextfree - 1; i++) {
 					printf("%c", ST[i]);
 				}
-				printf("       (entered)\n");
+				printf("       \t(entered)\n");
 				ADDHT(hashcode);
 			}
 			else {
-				printf("%6d      ", sameid);
+				printf("%6d      \t\t", sameid);
 				for (i = nextid; i < nextfree; i++)
 					printf("%c", ST[i]);
-				printf("       (already existed)\n");
+				printf("       \t(already existed)\n");
 				nextfree = nextid;
 			}
 		}
