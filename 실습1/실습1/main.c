@@ -172,6 +172,10 @@ void ReadID()
 			ST[nextfree++] = input;
 			input = fgetc(fp);
 		}
+		if (nextfree - nextid > 12) {
+			err = toolong;
+			PrintError(err, NULL);
+		}
 	}
 }
 
