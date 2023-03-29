@@ -61,7 +61,7 @@ int isSeperator(char c) {
 void PrintHeading() {
 	printf("\n\n");
 	printf(" -----------         -----------\n");
-	printf(" Index in ST            identifier \n");
+	printf(" Index in ST         identifier \n");
 	printf(" -----------         -----------\n");
 	printf("\n");
 }
