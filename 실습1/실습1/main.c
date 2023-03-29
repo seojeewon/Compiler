@@ -38,15 +38,12 @@ ERRORtypes err;
 
 FILE* fp; //to be a pointer to FILE
 char input;
-char err_input;
-
-int issame = FALSE;
 
 
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen("testdata.txt", "r");
+	fp = fopen("testdata4.txt", "r");
 	input = fgetc(fp);
 }
 
@@ -64,12 +61,12 @@ int isSeperator(char c) {
 void PrintHeading() {
 	printf("\n\n");
 	printf(" -----------         -----------\n");
-	printf(" Index in ST         identifier \n");
+	printf(" Index in ST            identifier \n");
 	printf(" -----------         -----------\n");
 	printf("\n");
 }
 
-/* 서영
+/* ����
    PrintHStable - Prints the hash table.write out the hashcode and the list of identifiers
    associated with each hashcode,but only for non-empty lists.
    Print out the number of characters used up in ST.*/
@@ -94,68 +91,57 @@ void PrintHStable()
 	printf("\n\n <%dcharacters are used in the string table>\n", nextfree);
 }
 
-/* 효진
+/* ȿ��
    PrintError - Print out error messages
    overst : overflow in ST
    print the hashtable and abort by calling the function "abort()".
    illid : illegal identifier
-   illsp : illegal seperator
-   toolong : too long identifier*/
-void PrintError(ERRORtypes err, char* str)
+   illsp :illegal seperator*/
+void PrintError(ERRORtypes err)
 {
 	switch (err) {
-	case overst:
-		printf("...Error...  OVERFLOW ");
-		PrintHStable();
-		exit(0);
-		break;
-	case illsp:
-		printf("...Error...  %s   %c is illegal seperator \n", str, err_input);
-		break;
-	case illid:
-		printf("...Error... ");
-		while (input != EOF && (isLetter(input) || isDigit(input))) {
-			printf("%c", input);
-			input = fgetc(fp);
-		}
-		printf(" start with digit \n");
-		break;
-	case toolong:
-		printf("...Error...");
-		for (int i = nextid; i < nextfree; i++) {
-			printf("%c", input);
-		}
-		printf(" too long identifier \n");
-		break;
-	case noerror:
-		break;
+		case overst:
+			printf("...Error...  OVERFLOW ");
+			PrintHStable();
+			exit(0);
+			break;
+		case illsp:
+			printf("...Error...  %c is illegal seperator \n", input);
+			break;
+		case illid:
+			printf("...Error... ");
+			while (input != EOF && (isLetter(input) || isDigit(input))) {
+				printf("%c", input);
+				input = fgetc(fp);
+			}
+			printf(" start with digit \n");
+			break;
+		case toolong:
+			printf("...Error...");
+			for (int i = nextid; i < nextfree; i++) {
+                printf("%c", input);
+            }
+            printf(" too long identifier \n");
+			break;
+		case noerror:
+			break;
 	}
 }
 
-/* 지원
+/* ����
    Skip Seperators - skip over strings of spaces, tabs, newlines, ., ; : ? !
    if illegal seperators,print out error message. */
 void SkipSeperators() {
 	while (input != EOF && !(isLetter(input) || isDigit(input))) {
 		if (!isSeperator(input)) {
-			err_input = input;
-			char* str = malloc(sizeof(char) * 50);
-			int idx = 0;
-			str[idx++] = input;
-			while (!isSeperator(input)) {
-				input = fgetc(fp);
-				str[idx++] = input;
-			}
-			str[idx] = '\0';
 			err = illsp;
-			PrintError(err, str);
-			return;
+			PrintError(err);
 		}
 		input = fgetc(fp);
 	}
 }
 
-/* 지원
+/* ����
    ReadID - Read identifier from the input file the string table ST directly into
    ST(append it to the previous identifier).
    An identifier is a string of letters and digits, starting with a letter.
@@ -165,16 +151,13 @@ void ReadID()
 	nextid = nextfree;
 	if (isDigit(input)) {
 		err = illid;
-		PrintError(err, NULL);
+		PrintError(err);
 	}
 	else {
-		while (input != EOF && !isSeperator(input)) {
-			if (!(isLetter(input) || isDigit(input))) {
-				err = illsp;
-			}
+		while (input != EOF && (isLetter(input) || isDigit(input))) {
 			if (nextfree == STsize) {
 				err = overst;
-				PrintError(err, NULL);
+				PrintError(err);
 			}
 			ST[nextfree++] = input;
 			input = fgetc(fp);
@@ -182,28 +165,28 @@ void ReadID()
 	}
 }
 
-/* 서영
+/* ����
    ComputeHS - Compute the hash code of identifier by summing the ordinal values of its
    characters and then taking the sum modulo the size of HT. */
-void ComputeHS(int nid, int nfree) {
-	int code = 0;
+void ComputeHS( int nid, int nfree ){ 
+	int code=0;
 	char ch;
-	for (int i = nid; i < nfree; i++) {
-		if ((ST[i] >= 'A') && (ST[i] <= 'Z')) {
-			ch = ST[i] - 'A' + 'a';
-
+	for(int i=nid; i<nfree;i++){
+		if((ST[i]>='A')&&( ST[i]<='Z')){
+			ch=ST[i]-'A'+'a';
+			
 		}
-		else {
-			ch = ST[i];
+		else{
+		  ch=ST[i];
 		}
-		code += (int)ch;
-
-	}
-	hashcode = (code % HTsize) + 1;
-	if (hashcode == 100) hashcode = 0;
+		code+=(int)ch;
+		
+	}  
+	hashcode=(code%HTsize)+1;
+	if(hashcode == 100) hashcode = 0;
 }
 
-/* 효원
+/* ȿ��
    LookupHS - For each identifier, Look it up in the hashtable for previous occurrence
    of the identifier.If find a match, set the found flag as true.
    Otherwise flase.
@@ -223,9 +206,8 @@ void LookupHS(int nid, int hscode)
 			sameid = i;
 
 			while (ST[i] != '\0' && ST[j] != '\0' && found == TRUE) {
-				if (ST[i] != ST[j]) {
+				if (ST[i] != ST[j] && toupper(ST[i]) != toupper(ST[j]))
 					found = FALSE;
-				}
 				else {
 					i++;
 					j++;
@@ -236,7 +218,7 @@ void LookupHS(int nid, int hscode)
 	}
 }
 
-/* 효원
+/* ȿ��
    ADDHT - Add a new identifier to the hash table.
    If list head ht[hashcode] is null, simply add a list element with
    starting index of the identifier in ST.
@@ -251,28 +233,9 @@ void ADDHT(int hscode)
 	HT[hscode] = ptr;
 }
 
-// 
-void isUpperSameExist(int hscode, char* word) {
-	HTpointer here;
 
-	issame = FALSE;
-	for (int i = 0; i < HTsize; i++) {
-		if (i == hscode) {
-			for (here = HT[i]; here != NULL && issame == FALSE; here = here->next) {
-				int j = here->index;
-				int idx = 0;
-				while (ST[j] != '\0' && j < STsize)
-					if (toupper(ST[j++]) != toupper(word[idx++])) {
-						issame = FALSE;
-						break;
-					}
-					else issame = TRUE;
-			}
-		}
-	}
-}
 
-/* 효진
+/* ȿ��
 MAIN - Read the identifier from the file directly into ST.
 Compute its hashcode.
 Look up the idetifier in hashtable HT[hashcode]
@@ -291,11 +254,10 @@ int main() {
 		err = noerror;
 		SkipSeperators();
 		ReadID();
-		
 		if (input != EOF && err != illid) {
 			if (nextfree == STsize) {
 				err = overst;
-				PrintError(err, NULL);
+				PrintError(err);
 			}
 			ST[nextfree++] = '\0';
 
@@ -304,15 +266,10 @@ int main() {
 
 			if (!found) {
 				printf("%6d      ", nextid);
-				char* str = malloc(sizeof(char) * 12);
-				int idx = 0;
 				for (i = nextid; i < nextfree - 1; i++) {
 					printf("%c", ST[i]);
-					str[idx++] = ST[i];
 				}
-				isUpperSameExist(hashcode, str);
-				if (issame) printf("       (already existed)\n");
-				else printf("       (entered)\n");
+				printf("       (entered)\n");
 				ADDHT(hashcode);
 			}
 			else {
