@@ -68,7 +68,7 @@ void PrintHeading() {
 	printf("\n");
 }
 
-/* ����
+/* 서영
    PrintHStable - Prints the hash table.write out the hashcode and the list of identifiers
    associated with each hashcode,but only for non-empty lists.
    Print out the number of characters used up in ST.*/
@@ -93,12 +93,13 @@ void PrintHStable()
 	printf("\n\n <%dcharacters are used in the string table>\n", nextfree);
 }
 
-/* ȿ��
+/* 효진
    PrintError - Print out error messages
    overst : overflow in ST
    print the hashtable and abort by calling the function "abort()".
    illid : illegal identifier
-   illsp :illegal seperator*/
+   illsp : illegal seperator
+   toolong : too long identifier*/
 void PrintError(ERRORtypes err)
 {
 	switch (err) {
@@ -130,7 +131,7 @@ void PrintError(ERRORtypes err)
 	}
 }
 
-/* ����
+/* 지원
    Skip Seperators - skip over strings of spaces, tabs, newlines, ., ; : ? !
    if illegal seperators,print out error message. */
 void SkipSeperators() {
@@ -143,7 +144,7 @@ void SkipSeperators() {
 	}
 }
 
-/* ����
+/* 지원
    ReadID - Read identifier from the input file the string table ST directly into
    ST(append it to the previous identifier).
    An identifier is a string of letters and digits, starting with a letter.
@@ -167,7 +168,7 @@ void ReadID()
 	}
 }
 
-/* ����
+/* 서영
    ComputeHS - Compute the hash code of identifier by summing the ordinal values of its
    characters and then taking the sum modulo the size of HT. */
 void ComputeHS( int nid, int nfree ){ 
@@ -188,7 +189,7 @@ void ComputeHS( int nid, int nfree ){
 	if(hashcode == 100) hashcode = 0;
 }
 
-/* ȿ��
+/* 효원
    LookupHS - For each identifier, Look it up in the hashtable for previous occurrence
    of the identifier.If find a match, set the found flag as true.
    Otherwise flase.
@@ -221,7 +222,7 @@ void LookupHS(int nid, int hscode)
 	}
 }
 
-/* ȿ��
+/* 효원
    ADDHT - Add a new identifier to the hash table.
    If list head ht[hashcode] is null, simply add a list element with
    starting index of the identifier in ST.
@@ -257,7 +258,7 @@ void isUpperSameExist(int hscode, char* word){
 	}
 }
 
-/* ȿ��
+/* 효진
 MAIN - Read the identifier from the file directly into ST.
 Compute its hashcode.
 Look up the idetifier in hashtable HT[hashcode]
