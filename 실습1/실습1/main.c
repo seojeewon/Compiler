@@ -120,9 +120,10 @@ void PrintError(ERRORtypes err, char* str)
 	case toolong:
 		printf("...Error...");
 		for (int i = nextid; i < nextfree; i++) {
-			printf("%c", input);
+			printf("%c", ST[i]);
 		}
 		printf(" too long identifier \n");
+		nextfree = nextid;
 		break;
 	case noerror:
 		break;
