@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define FILE_NAME "testdata.txt"
+#define FILE_NAME "Input_error_3.txt"
 #define STsize 1000 //size of string table
 #define HTsize 100 //size of hash table
 
