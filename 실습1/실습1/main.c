@@ -38,9 +38,9 @@ ERRORtypes err;
 
 FILE* fp; //to be a pointer to FILE
 char input;
-char err_input;
+char err_input;	//store illegal seperator
 
-void checkHT();
+void CheckHT();
 
 //Initialize - open input file
 void initialize()
@@ -92,7 +92,7 @@ void PrintHStable()
 			printf("\n");
 		}
 	}
-	printf("\n\n <%dcharacters are used in the string table>\n", nextfree);
+	printf("\n\n <%d characters are used in the string table>\n", nextfree);
 }
 
 /* 효진
@@ -106,7 +106,7 @@ void PrintError(ERRORtypes err, char* str)
 {
 	switch (err) {
 	case overst:
-		printf("...Error...  OVERFLOW ");
+		printf("...Error...  \t\tOVERFLOW ");
 		PrintHStable();
 		exit(0);
 		break;
@@ -114,12 +114,12 @@ void PrintError(ERRORtypes err, char* str)
 		printf("...Error... \t\t%s       \t%c is not allowed \n", str, err_input);
 		break;
 	case illid:
-		printf("...Error... ");
+		printf("...Error... \t\t");
 		while (input != EOF && (isLetter(input) || isDigit(input))) {
 			printf("%c", input);
 			input = fgetc(fp);
 		}
-		printf(" start with digit \n");
+		printf(" \tstart with digit \n");
 		break;
 	case toolong:
 		printf("...Error... \t\t");
@@ -144,13 +144,13 @@ void SkipSeperators() {
 			char* str = malloc(sizeof(char) * 50);
 			int idx = 0;
 			str[idx++] = input;
-			
+
 			while (TRUE) {
 				input = fgetc(fp);
-				if (isSeperator(input) || input==EOF) break;
+				if (isSeperator(input) || input == EOF) break;
 				str[idx++] = input;
 			}
-			
+
 			str[idx] = '\0';
 			err = illsp;
 			PrintError(err, str);
@@ -186,17 +186,17 @@ void ReadID()
 				flag = 1;
 				err_input = input;
 				err = illsp;
-				
+
 			}
 			ST[nextfree++] = input;
 			input = fgetc(fp);
-			
+
 		}
-		
+
 		if (input == EOF && err != illsp) {	//ReadID내에서 input 읽다가 EOF 읽은 경우, 그 전까지 읽은 
-			checkHT();
+			CheckHT();
 		}
-		
+
 		if (err == illsp) {
 			char* str = malloc(sizeof(char) * 50);
 			int i;
@@ -285,7 +285,7 @@ void ADDHT(int hscode)
 }
 
 //지원
-void checkHT() {
+void CheckHT() {
 	if (nextfree == STsize) {
 		err = overst;
 		PrintError(err, NULL);
@@ -331,9 +331,9 @@ int main() {
 		err = noerror;
 		SkipSeperators();
 		ReadID();
-		
-		if (input != EOF && err != illid && err!=toolong && err != illsp) {
-			checkHT();
+
+		if (input != EOF && err != illid && err != toolong && err != illsp) {
+			CheckHT();
 		}
 	}
 	PrintHStable();
