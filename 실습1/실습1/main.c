@@ -45,7 +45,7 @@ void CheckHT();
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen("testdata.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	input = fgetc(fp);
 }
 
