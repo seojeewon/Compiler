@@ -1,0 +1,4 @@
+c This is a test data text file with no error
+this Is our first assignment on the Complier class
+Today is Thursday
+Have A nice day

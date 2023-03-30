@@ -45,7 +45,7 @@ void CheckHT();
 //Initialize - open input file
 void initialize()
 {
-	fp = fopen("testdata.txt", "r");
+	fp = fopen(FILE_NAME, "r");
 	input = fgetc(fp);
 }
 
@@ -241,7 +241,8 @@ void ComputeHS(int nid, int nfree) {
    LookupHS - For each identifier, Look it up in the hashtable for previous occurrence
    of the identifier.If find a match, set the found flag as true.
    Otherwise flase.
-   If find a match, save the starting index of ST in same id. */
+   If find a match, save the starting index of ST in same id. 
+	 대문자로 통일했을 때 동일한 문자가 있으면 해시테이블에 추가하지 않음*/
 void LookupHS(int nid, int hscode)
 {
 	HTpointer here;
