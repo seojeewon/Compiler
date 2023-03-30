@@ -50,6 +50,7 @@ void initialize()
 }
 
 //지원
+//check whether input is seperator
 int isSeperator(char c) {
 	int sep_len;
 
@@ -139,9 +140,9 @@ void PrintError(ERRORtypes err, char* str)
    if illegal seperators,print out error message. */
 void SkipSeperators() {
 	while (input != EOF && !(isLetter(input) || isDigit(input))) {
-		if (!isSeperator(input)) {
+		if (!isSeperator(input)) {	//when input is illegal seperator, store the identifier that starts with illegal seperator, and hand the string to PrintError function.
 			err_input = input;
-			char* str = malloc(sizeof(char) * 50);
+			char* str = malloc(sizeof(char) * 50);	
 			int idx = 0;
 			str[idx++] = input;
 
@@ -168,15 +169,15 @@ void ReadID()
 {
 	err = noerror;
 	nextid = nextfree;
-	if (input == EOF) {
+	if (input == EOF) {		
 		return;
 	}
-	if (isDigit(input)) {
+	if (isDigit(input)) {	//for illegal identifier error
 		err = illid;
 		PrintError(err, NULL);
 	}
 	else {
-		int flag = 0;
+		int flag = 0;	//check whether there is a illegal seperator in the identifier
 		while (input != EOF && (!isSeperator(input))) {
 			if (nextfree == STsize) {
 				err = overst;
@@ -193,11 +194,11 @@ void ReadID()
 
 		}
 
-		if (input == EOF && err != illsp) {	//ReadID내에서 input 읽다가 EOF 읽은 경우, 그 전까지 읽은 
+		if (input == EOF && err != illsp) {	//ReadID내에서 input 읽다가 EOF 읽은 경우, 그 전까지 읽은 문자들 CheckHT에서 확인
 			CheckHT();
 		}
 
-		if (err == illsp) {
+		if (err == illsp) {	//identifier에 illegal seperator가 있는 경우
 			char* str = malloc(sizeof(char) * 50);
 			int i;
 			for (i = nextid; i < nextfree; i++) {
@@ -209,7 +210,7 @@ void ReadID()
 			nextfree = nextid;
 			return;
 		}
-		if (nextfree - nextid > 12) {
+		if (nextfree - nextid > 12) {	//identifier가 12자 초과인 경우 toolong error
 			err = toolong;
 			PrintError(err, NULL);
 		}
@@ -286,6 +287,7 @@ void ADDHT(int hscode)
 }
 
 //지원
+//check whether identifier is already in the hash table
 void CheckHT() {
 	if (nextfree == STsize) {
 		err = overst;
