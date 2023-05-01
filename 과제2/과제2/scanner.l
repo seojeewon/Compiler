@@ -31,7 +31,6 @@ D	[0-9]
 "return"				return(TRETURN);
 "void"				return(TVOID);
 "while"				return(TWHILE);
-"%"				return(TMOD);
 
 "="				return(TASSIGN);
 "+="				return(TADDASSIGN);
