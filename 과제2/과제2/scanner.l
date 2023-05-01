@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tn.h" /* token name definition */
-# include "glob.h" /* global variable */
+# include "global.h" /* global variable */
 
 extern ERRORtypes err;
 extern SymbolTable(string yytext);
@@ -52,6 +52,9 @@ D	[0-9]
 
 "++"				return(TINC);
 "--"				return(TDEC);
+
+"\""				return(TBQUOTE);
+"\'"				return(TSQUOTE);
 
 "\""				return(TBQUOTE);
 "\'"				return(TSQUOTE);
