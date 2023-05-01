@@ -56,9 +56,6 @@ D	[0-9]
 "\""				return(TBQUOTE);
 "\'"				return(TSQUOTE);
 
-"\""				return(TBQUOTE);
-"\'"				return(TSQUOTE);
-
 "("				return(TLPAREN);
 ")"				return(TRPAREN);
 "."				return(TCOMMA);
@@ -80,8 +77,8 @@ D	[0-9]
 {D}+({A}|{D})+			{err=illid_digit; return(TERROR);}
 
 
-"/*"([^*]|"*"+[^*/])*"*"+"/" return(TCOMMENT);
-"//".* 						return(TCOMMENT);
+"/*"([^*]|"*"+[^*/])*"*"+"/" return(TCOMMENT_TEXT);
+"//".* 						return(TCOMMENT_LINE);
 [ \t]				;
 "\n"				return(TLINE);
 .				{err=illid; return(TERROR);}
