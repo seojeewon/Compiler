@@ -28,7 +28,7 @@ D	[0-9]
 "else"				return(TELSE);
 "if"				return(TIF);
 "int"				return(TINT);
-"return"				return(TRETURN);
+"return"			return(TRETURN);
 "void"				return(TVOID);
 "while"				return(TWHILE);
 
