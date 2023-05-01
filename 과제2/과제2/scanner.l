@@ -79,10 +79,9 @@ D	[0-9]
 
 "/*"([^*]|"*"+[^*/])*"*"+"/" return(TCOMMENT);
 "//".* 						return(TCOMMENT);
-.				{err=illid; return(TERROR);}
 [ \t]				;
 "\n"				return(TLINE);
-
+.				{err=illid; return(TERROR);}
 %%
 
 int yywrap()
