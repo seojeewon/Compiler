@@ -73,10 +73,14 @@ D	[0-9]
 					else{return(TIDENT);}}}
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
 {D}+({A}|{D})+			{err=illid_digit; return(TERROR);}
-*				{err=illid; return(TERROR);}
-/*공백이랑 주석 처리코드*/
-"//".*				return(TCOMMENT_LINE);
-"/*"([^*]|"*"+[^*/])*"*"+"/"		return(TCOMMENT_TEXT);
+
+
+"/*"([^*]|"*"+[^*/])*"*"+"/" return(TCOMMENT);
+"//".* 						return(TCOMMENT);
+.				{err=illid; return(TERROR);}
+[ \t]				;
+"\n"				return(TCARR);
+
 %%
 
 int yywrap()
