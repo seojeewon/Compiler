@@ -9,8 +9,9 @@
 #include "tn.h" /* token name definition */
 # include "global.h" /* global variable */
 
-extern ERRORtypes err;
-extern SymbolTable(string yytext);
+typedef enum errorTypes ERRORtypes;
+ERRORtypes err;
+
 %}
 
 A	[a-zA-Z_]
@@ -66,7 +67,7 @@ D	[0-9]
 "]"				return(TRBRACKET);
 
 {A}({A}|{D})* 	{if(yyleng>12){
-					err=illleng; return(TERROR);}
+					err=overst; return(TERROR);}
 				else{
 					SymbolTable(yytext); 
 					//SymbolTable(identifier)넣으면 처리해줘야함
@@ -74,7 +75,7 @@ D	[0-9]
 						return(TERROR);}
 					else{return(TIDENT);}}}
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
-{D}+({A}|{D})+			{err=illid_digit; return(TERROR);}
+{D}+({A}|{D})+			{err=illid; return(TERROR);}
 
 
 "/*"([^*]|"*"+[^*/])*"*"+"/" return(TCOMMENT_TEXT);
