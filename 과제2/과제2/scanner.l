@@ -19,9 +19,9 @@ D	[0-9]
 %%
 
 "+"				return(TPLUS);
-"*"				return(TSTAR);
+"*"				return(TMUL);
 "%"				return(TMOD);
-"/"				return(TSLASH);
+"/"				return(TDIV);
 "-"				return(TMINUS);
 
 "const"				return(TCONST);
@@ -54,6 +54,9 @@ D	[0-9]
 "++"				return(TINC);
 "--"				return(TDEC);
 
+"\""				return(TBQUOTE);
+"\'"				return(TSQUOTE);
+
 "("				return(TLPAREN);
 ")"				return(TRPAREN);
 "."				return(TCOMMA);
@@ -79,7 +82,7 @@ D	[0-9]
 "//".* 						return(TCOMMENT);
 .				{err=illid; return(TERROR);}
 [ \t]				;
-"\n"				return(TCARR);
+"\n"				return(TLINE);
 
 %%
 
