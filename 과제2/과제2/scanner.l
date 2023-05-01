@@ -5,12 +5,10 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "tn.h" /* token name definition */
 # include "glob.h" /* global variable */
-#include <stdlib.h>
-enum tnumber { TIDENT, TPLUS, TSTAR, TMOD, TSLASH, TMINUS, TCONST, TELSE, TIF, TINT, TRETURN, TVOID, TWHILE, TMOD, TASSIGN,
-		TADDASSIGN, TSUBASSIGN, TMULASSIGN, TDIVASSIGN, TMODASSIGN, TNOT, TAND, TOR, TEQUAL, TNOTEQU, TLESS, TGREAT,
-		TLESSE, TGREATE, TINC, TDEC, TLPAREN, TRPAREN, TCOMMA, TSEMI, TLBRACE, TRBRACE, TLBRACKET, TRBRACKET, TNUMBER, TREALNUM };
+
 extern ERRORtypes err;
 extern SymbolTable(string yytext);
 %}
@@ -76,7 +74,9 @@ D	[0-9]
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
 {D}+({A}|{D})+			{err=illid_digit; return(TERROR);}
 *				{err=illid; return(TERROR);}
-//공백이랑 주석 처리코드
+/*공백이랑 주석 처리코드*/
+"//".*				return(TCOMMENT_LINE);
+"/*"([^*]|"*"+[^*/])*"*"+"/"		return(TCOMMENT_TEXT);
 %%
 
 int yywrap()
