@@ -50,7 +50,7 @@ typedef struct HTentry {
 	HTpointer next;  //pointer to next identifier
 } HTentry;
 
-enum errorTypes { noerror, illid_digit, illid_long, illid_illch, overst };
+enum errorTypes { noerror, illid, illleng, overst,illid_digit };;
 typedef enum errorTypes ERRORtypes;
 
 char seperators[] = " .,;:?!\t\n";
@@ -141,7 +141,7 @@ void PrintError(ERRORtypes err)
 		PrintHStable();
 		exit(0);
 		break;
-	case illid_long:
+	case illleng:
 		printf("...Error... ");
 		while (input != EOF && (isLetter(input) || isDigit(input))) {
 			printf("%c", input);
@@ -149,7 +149,7 @@ void PrintError(ERRORtypes err)
 		}
 		printf(" too long identifier \n");
 		break;
-	case illid_illch:
+	case illid:
 		printf("...Error... ");
 		int index = nextid;
 		while (ST[index] != '\0') {
@@ -175,7 +175,7 @@ void SkipSeperators()
 {
 	while (input != EOF && !(isLetter(input) || isDigit(input))) {
 		if (!isSeperator(input)) {
-			err = illid_illch;
+			err = illid;
 			PrintError(err);
 		}
 		input = fgetc(fp);
@@ -205,16 +205,16 @@ void ReadID()
 			count++;
 
 			if (!(isLetter(input) || isDigit(input) || isSeperator(input)) && input != EOF) {
-				err = illid_illch;
+				err = illid;
 			}
 		}
 		if (count >= MAX_LEN) {
-			err = illid_long;
+			err = illleng;
 			ST[nextfree] = '\0';
 			PrintError(err);
 			nextfree = nextid;
 		}
-		if (err == illid_illch) {
+		if (err == illid) {
 			ST[nextfree] = '\0';
 			PrintError(err);
 			nextfree = nextid;

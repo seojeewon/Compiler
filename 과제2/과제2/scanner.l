@@ -11,6 +11,8 @@
 enum tnumber { TIDENT, TPLUS, TSTAR, TMOD, TSLASH, TMINUS, TCONST, TELSE, TIF, TINT, TRETURN, TVOID, TWHILE, TMOD, TASSIGN,
 		TADDASSIGN, TSUBASSIGN, TMULASSIGN, TDIVASSIGN, TMODASSIGN, TNOT, TAND, TOR, TEQUAL, TNOTEQU, TLESS, TGREAT,
 		TLESSE, TGREATE, TINC, TDEC, TLPAREN, TRPAREN, TCOMMA, TSEMI, TLBRACE, TRBRACE, TLBRACKET, TRBRACKET, TNUMBER, TREALNUM };
+extern ERRORtypes err;
+extern SymbolTable(string yytext);
 %}
 
 A	[a-zA-Z_]
@@ -64,16 +66,17 @@ D	[0-9]
 "]"				return(TRBRACKET);
 
 {A}({A}|{D})* 	{if(yyleng>12){
-					err=illleng; PrintError(err);return(TERROR);}
+					err=illleng; return(TERROR);}
 				else{
-					SymbolTable(yytext);
+					SymbolTable(yytext); 
+					//SymbolTable(identifier)넣으면 처리해줘야함
 					if(err == overst){
 						return(TERROR);}
 					else{return(TIDENT);}}}
-
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
-{D}+({A}|{D})+			{err=illid; PrintError(err);return(TERROR);}
-*				{err=illid; PrintError(err);return(TERROR);}
+{D}+({A}|{D})+			{err=illid_digit; return(TERROR);}
+*				{err=illid; return(TERROR);}
+//공백이랑 주석 처리코드
 %%
 
 int yywrap()
