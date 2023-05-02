@@ -9,10 +9,8 @@
 #include "tn.h" /* token name definition */
 //# include "global.h" /* global variable */
 
-typedef enum errorTypes ERRORtypes;
-ERRORtypes err;
-extern reporterror(char* string);
-
+enum errorTypes err;
+extern void printerror(enum errorTypes err, char* str);
 %}
 
 A	[a-zA-Z_]
@@ -69,14 +67,14 @@ D	[0-9]
 
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
 {A}({A}|{D})* 			return(TIDENT);
-{D}+({A}|{D})+			{err=illid; return(TERROR);}
+{D}+({A}|{D})+			{err=illid; printerror(err, yytext);}
 
 
 "/*"([^*]|"*"+[^*/])*"*"+"/" 		return(TCOMMENT_TEXT);
 "//".* 				return(TCOMMENT_LINE);
 [ \t]				;
 "\n"				return(TLINE);
-.				{err=illid; return(TERROR);}
+.				{err=illid; printerror(err, yytext);}
 %%
 
 int yywrap()
