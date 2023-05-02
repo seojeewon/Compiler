@@ -11,9 +11,11 @@
 //extern void SkipSeperators();
 extern void reporterror(char* string);
 extern yylex();
+extern int yywrap();
 extern char* yytext;
 int errcnt;
 int line=1;
+
 
 void countline(char* string) {
 	int i = 0;
@@ -137,6 +139,9 @@ void main() {
 
 	//scan tokens using the Flex lexical analyzer
 	while ((tn = yylex()) != EOF) {
+		if(yywrap==1){
+			break;
+		}
 		printtoken(tn);
 	}
 
