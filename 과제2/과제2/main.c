@@ -1,4 +1,4 @@
-/*
+﻿/*
 * main.c - �� token�� ���� ���
 * programmer-�輭��, ��ȿ��, ������, ��ȿ��
 */
@@ -8,7 +8,7 @@
 #include "tn.h"	//token name define
 #include "global.h"
 
-//extern void SkipSeperators();
+extern void SkipSeperators();
 extern void reporterror(char* string);
 extern yylex();
 extern char* yytext;
@@ -112,7 +112,7 @@ void printtoken(enum tokentypes tn) {
 		case TCOMMENT_LINE: printf("Comment line\t");
 			break;
 		case TCOMMENT_TEXT: printf("Comment line\t"); countline(yytext);
-			break;		
+			break;
 		case TBQUOTE: printf("Big Quote");
 			break;
 		case TSQUOTE: printf("Small Quote");
@@ -127,7 +127,6 @@ void main() {
 	enum tokentypes tn;
 	enum errorTypes err;
 	line = 1;
-	errcnt = 0;
 	//print header
 	printf("============================================================\n");
 	printf(" Line number\tToken type\tST-index\tToken\n");

@@ -49,21 +49,15 @@ char input;
 void PrintError(enum errorTypes err)
 {
 	switch (err) {
-	case overfl:
+	case overst:
 		nextfree = nextid;
 		break;
-	
-		break;
+
 	case illid:
-		// printf("...Error... ");
-		// int index = nextid;
-		// while (ST[index] != '\0') {
-		// 	printf("%c", ST[index++]);
-		// }
-		// printf(" identifier containing illegal character\n");
 		break;
-	
-	
+
+	case overfl:
+		break;
 	}
 }
 
