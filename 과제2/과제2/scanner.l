@@ -29,7 +29,7 @@ D	[0-9]
 "else"				return(TELSE);
 "if"				return(TIF);
 "int"				return(TINT);
-"return"			return(TRETURN);
+"return"				return(TRETURN);
 "void"				return(TVOID);
 "while"				return(TWHILE);
 
@@ -78,8 +78,8 @@ D	[0-9]
 {D}+({A}|{D})+			{err=illid; return(TERROR);}
 
 
-"/*"([^*]|"*"+[^*/])*"*"+"/" return(TCOMMENT_TEXT);
-"//".* 						return(TCOMMENT_LINE);
+"/*"([^*]|"*"+[^*/])*"*"+"/" 		return(TCOMMENT_TEXT);
+"//".* 				return(TCOMMENT_LINE);
 [ \t]				;
 "\n"				return(TLINE);
 .				{err=illid; return(TERROR);}

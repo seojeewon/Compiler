@@ -8,7 +8,7 @@
 #include "tn.h"	//token name define
 #include "global.h"
 
-extern void SkipSeperators();
+//extern void SkipSeperators();
 extern void reporterror(char* string);
 extern yylex();
 extern char* yytext;
@@ -126,6 +126,7 @@ void main() {
 	enum tokentypes tn;
 	enum errorTypes err;
 	line = 1;
+	errcnt = 0;
 	//print header
 	printf("============================================================\n");
 	printf(" Line number\tToken type\tST-index\tToken\n");

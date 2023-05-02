@@ -27,8 +27,7 @@ typedef struct HTentry {
 	HTpointer next;  //pointer to next identifier
 } HTentry;
 
-typedef enum errorTypes ERRORtypes;
-ERRORtypes err;
+enum errorTypes err;
 
 char seperators[] = " .,;:?!\t\n";
 
@@ -42,7 +41,6 @@ int sameid;  //first index of identifier
 
 int found;  //for the previous occurrence of an identifie
 
-ERRORtypes err;
 
 FILE* fp;   //to be a pointer to FILE 
 char input;
@@ -67,10 +65,10 @@ int isSeperator(char c)
 			illid_digit    : illegal identifier (start with digit)
 			illid_long	: illegal identifier (too long identifier)
 			illid_illch	: illegal identifier (containing illegal characters) */
-void PrintError(ERRORtypes err)
+void PrintError(enum errorTypes err)
 {
 	switch (err) {
-	case overst:
+	case overfl:
 		nextfree = nextid;
 		// printf("...Error...   OVERFLOW ");
 		// PrintHStable();
@@ -78,7 +76,7 @@ void PrintError(ERRORtypes err)
 		break;
 	
 		break;
-	case illid:
+	case overst:
 		// printf("...Error... ");
 		// int index = nextid;
 		// while (ST[index] != '\0') {
@@ -87,8 +85,7 @@ void PrintError(ERRORtypes err)
 		// printf(" identifier containing illegal character\n");
 		break;
 	
-	case overfl:
-		break;
+	
 	}
 }
 

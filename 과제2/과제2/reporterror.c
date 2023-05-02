@@ -8,7 +8,7 @@
 #include "global.h"
 #define isWord(x) ((((x>='a'&&(x)<='z') || ((x)>='A'&&(x)<='Z')) || (x=='_')))
 #define isNum(x) ((x) >= '0' && (x) <= '9')
-extern void symtable(char* string);
+extern void Symboltable(char* str);
 typedef enum errorTypes ERROR;
 ERROR errr = noerror;
 
@@ -28,10 +28,6 @@ void printerror(ERROR err, char* string)
 	}
 	else if (err == overst) {
 		printf("**Error**\t\t\t%s over 12 words", string);
-		errcnt++;
-	}
-	else if (err == illsp) {
-		printf("**Error**\t\t%s Illegal Symbol", string);
 		errcnt++;
 	}
 
