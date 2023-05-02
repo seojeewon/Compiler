@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tn.h" /* token name definition */
-# include "global.h" /* global variable */
+//# include "global.h" /* global variable */
 
 typedef enum errorTypes ERRORtypes;
 ERRORtypes err;
@@ -67,7 +67,7 @@ D	[0-9]
 "["				return(TLBRACKET);
 "]"				return(TRBRACKET);
 
-{A}({A}|{D})* 	reporterror(yytext);
+{A}({A}|{D})* 			return(TIDENT);
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
 {D}+({A}|{D})+			{err=illid; return(TERROR);}
 

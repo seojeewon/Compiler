@@ -6,12 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tn.h"	//token name define
-#include "global.h"
+//#include "global.h"
 
-extern void SkipSeperators();
+//extern void SkipSeperators();
 extern void reporterror(char* string);
 extern yylex();
 extern char* yytext;
+int errcnt;
+int line=1;
 
 void countline(char* string) {
 	int i = 0;
@@ -28,112 +30,113 @@ void printtoken(enum tokentypes tn) {
 		return;
 	}
 	else {
-		printf("%11d\t", line);
+		printf("%-11d\t", line);
 		switch (tn)
 		{
 		case TIDENT: reporterror(yytext); break;
 			break;
-		case TPLUS: printf("Plus\t");
+		case TPLUS: printf("TPLUS\t\t%s\n", yytext);
 			break;
-		case TMUL: printf("Multiply\t");
+		case TMUL: printf("TMUL\t\t%s\n", yytext);
 			break;
-		case TMOD: printf("Mod\t");
+		case TMOD: printf("TMOD\t\t%s\n", yytext);
 			break;
-		case TMINUS: printf("Minus\t");
+		case TMINUS: printf("TMINUS\t\t%s\n", yytext);
 			break;
-		case TDIV: printf("Divide\t");
+		case TDIV: printf("TDIV\t\t%s\n", yytext);
 			break;
-		case TCONST: printf("Constant\t");
+		case TCONST: printf("TCONST\t\t%s\n", yytext);
 			break;
-		case TELSE: printf("Else\t");
+		case TELSE: printf("TELSE\t\t%s\n", yytext);
 			break;
-		case TIF: printf("If\t");
+		case TIF: printf("TIF\t\t%s\n", yytext);
 			break;
-		case TINT: printf("Integer\t");
+		case TINT: printf("TINT\t\t%s\n", yytext);
 			break;
-		case TRETURN: printf("Return\t");
+		case TRETURN: printf("TRETURN\t\t%s\n", yytext);
 			break;
-		case TVOID: printf("Void\t");
+		case TVOID: printf("TVOID\t\t%s\n", yytext);
 			break;
-		case TWHILE: printf("While\t");
+		case TWHILE: printf("TWHILE\t\t%s\n", yytext);
 			break;
-		case TASSIGN: printf("Assign\t");
+		case TASSIGN: printf("TASSIGN\t\t%s\n", yytext);
 			break;
-		case TADDASSIGN: printf("Add and Assign\t");
+		case TADDASSIGN: printf("TADDASSIGN\t\t%s\n", yytext);
 			break;
-		case TSUBASSIGN: printf("Subtract and Assign\t");
+		case TSUBASSIGN: printf("TSUBASSIGN\t\t%s\n", yytext);
 			break;
-		case TMULASSIGN: printf("Multiply and Assign\t");
+		case TMULASSIGN: printf("TMULASSIGN\t\t%s\n", yytext);
 			break;
-		case TDIVASSIGN: printf("Divide and Assign\t");
+		case TDIVASSIGN: printf("TDIVASSIGN\t\t%s\n", yytext);
 			break;
-		case TMODASSIGN: printf("Mod and Assign\t");
+		case TMODASSIGN: printf("TMODASSIGN\t\t%s\n", yytext);
 			break;
-		case TNOT: printf("Not\t");
+		case TNOT: printf("TNOT\t\t%s\n", yytext);
 			break;
-		case TAND: printf("And\t");
+		case TAND: printf("TAND\t\t%s\n", yytext);
 			break;
-		case TOR: printf("Or\t");
+		case TOR: printf("TOR\t\t%s\n", yytext);
 			break;
-		case TEQUAL: printf("Equal\t");
+		case TEQUAL: printf("TEQUAL\t\t%s\n", yytext);
 			break;
-		case TNOTEQU: printf("Not Equal\t");
+		case TNOTEQU: printf("TNOTEQU\t\t%s\n", yytext);
 			break;
-		case TLESS: printf("Less\t");
+		case TLESS: printf("TLESS\t\t%s\n", yytext);
 			break;
-		case TGREAT: printf("Great\t");
+		case TGREAT: printf("TGREAT\t\t%s\n", yytext);
 			break;
-		case TLESSE: printf("Less Equal\t");
+		case TLESSE: printf("TLESSE\t\t%s\n", yytext);
 			break;
-		case TGREATE: printf("Great Equal\t");
+		case TGREATE: printf("TGREATE\t\t%s\n", yytext);
 			break;
-		case TINC: printf("Increase\t");
+		case TINC: printf("TINC\t\t%s\n", yytext);
 			break;
-		case TDEC: printf("Decrease\t");
+		case TDEC: printf("TDEC\t\t%s\n", yytext);
 			break;
-		case TLPAREN: printf("Left small bracket\t");
+		case TLPAREN: printf("TLPAREN\t\t%s\n", yytext);
 			break;
-		case TRPAREN: printf("Right small bracket\t");
+		case TRPAREN: printf("TRPAREN\t\t%s\n", yytext);
 			break;
-		case TCOMMA: printf("Comma\t");
+		case TCOMMA: printf("TCOMMA\t\t%s\n", yytext);
 			break;
-		case TSEMI: printf("Semicolon\t");
+		case TSEMI: printf("TSEMI\t\t%s\n", yytext);
 			break;
-		case TLBRACE: printf("Left Medium Bracket\t");
+		case TLBRACE: printf("TLBRACE\t\t%s\n", yytext);
 			break;
-		case TRBRACE: printf("Right Medium Bracket\t");
+		case TRBRACE: printf("TRBRACE\t\t%s\n", yytext);
 			break;
-		case TLBRACKET: printf("Left Large Bracket\t");
+		case TLBRACKET: printf("TLBRACKET\t\t%s\n", yytext);
 			break;
-		case TRBRACKET: printf("Right Large Bracket\t");
+		case TRBRACKET: printf("TRBRACKET\t\t%s\n", yytext);
 			break;
-		case TNUMBER: printf("Number: %d\t", atoi(yytext));
+		case TNUMBER: printf("TNUMBER\t\t%s\n", yytext);
 			break;
-		case TCOMMENT_LINE: printf("Comment line\t");
+		case TCOMMENT_LINE: printf("TCOMMENT_LINE\t\t%s\n", yytext);
 			break;
-		case TCOMMENT_TEXT: printf("Comment line\t"); countline(yytext);
+		case TCOMMENT_TEXT: printf("TCOMMENT_TEXT\t\t%s\n", yytext); countline(yytext);
 			break;
-		case TBQUOTE: printf("Big Quote");
+		case TBQUOTE: printf("TBQUOTE\t\t%s\n", yytext);
 			break;
-		case TSQUOTE: printf("Small Quote");
+		case TSQUOTE: printf("TSQUOTE\t\t%s\n", yytext);
 			break;
 		default:
 			break;
 		}
 	}
+	return;
 }
 
 void main() {
 	enum tokentypes tn;
 	enum errorTypes err;
-	line = 1;
+
 	//print header
 	printf("============================================================\n");
 	printf(" Line number\tToken type\tST-index\tToken\n");
 	printf("============================================================\n");
 
 	//scan tokens using the Flex lexical analyzer
-	while ((tn = yylex()) != EOF) {
+	while ((tn = yylex()) != TEOF) {
 		printtoken(tn);
 	}
 

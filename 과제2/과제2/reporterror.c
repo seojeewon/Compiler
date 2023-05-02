@@ -5,15 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tn.h"
-#include "global.h"
+//#include "global.h"
 #define isWord(x) ((((x>='a'&&(x)<='z') || ((x)>='A'&&(x)<='Z')) || (x=='_')))
 #define isNum(x) ((x) >= '0' && (x) <= '9')
-extern void SymbolTable(char* string);
+extern void Symboltable(char* string);
 typedef enum errorTypes ERROR;
 ERROR err = noerror;
 
 int errflag = 0;
 errcnt = 0;
+extern int STindex;  //the current identifier
+extern int nextfree;  //the next available index of ST
 
 //PrintError �Լ�: ERRORtypes ��ü ������ �������� ERROR ������ ���
 // error: illsp(������ �ʴ� ���� ����� �ĺ��� ����)
@@ -50,11 +52,11 @@ void reporterror(char* string) {
 	}
 
 	else {
-		printf("Identifier\t");
-		SymbolTable(string);
+		printf("TIDENT\t");
+		Symboltable(string);
 		if(err==noerror){
-			printf("%d\t",nid);
-			printf(string);
+			printf("%-11d\t",STindex);
+			printf("%s\n", string);
 		}
 	}
 }

@@ -5,9 +5,8 @@
 
 #define STsize 1000
 
-int line;
+
 char ST[STsize];
-int nid = 0;	//the current identifier
-int nfree = 0;	//the next available index of ST
+int nextid = 0;  //the current identifier
+int nextfree = 0;  //the next available index of ST
 int sameid = 0;	//identifier의 첫번째 index
-int errcnt;

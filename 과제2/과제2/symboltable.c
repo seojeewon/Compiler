@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tn.h"
-#include "global.h"
+//#include "global.h"
 
 #define STsize 1000  //size of string table
 #define HTsize 100	//size of hash table
@@ -36,6 +36,7 @@ int nextid = 0;  //the current identifier
 int nextfree = 0;  //the next available index of ST
 int hashcode;  //hash code of identifier
 int sameid;  //first index of identifier
+int STindex;
 
 int found;  //for the previous occurrence of an identifie
 
@@ -145,6 +146,9 @@ void LookupHS(int nid, int hscode)
 					j++;
 				}
 			}
+			if (found == TRUE) {
+				STindex = sameid;
+			}
 			here = here->next;
 		}
 	}
@@ -191,9 +195,10 @@ void Symboltable(char* str)
 
 		if (!found) {
 			ADDHT(hashcode);
+			STindex = nextid;
 		}
 		else {	// already existed
-			nextfree = nextid;
+			nextfree = nextid;			
 		}
 	}
 }
