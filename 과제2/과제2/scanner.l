@@ -67,8 +67,8 @@ D	[0-9]
 "["				return(TLBRACKET);
 "]"				return(TRBRACKET);
 
-{A}({A}|{D})* 			return(TIDENT);
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
+{A}({A}|{D})* 			return(TIDENT);
 {D}+({A}|{D})+			{err=illid; return(TERROR);}
 
 

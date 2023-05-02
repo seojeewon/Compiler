@@ -25,11 +25,11 @@ extern int nextfree;  //the next available index of ST
 void printerror(ERROR err, char* string)
 {
 	if (err == illid) {
-		printf("**Error**\t\t%s Illegal IDENT", string);
+		printf("**Error**\t\t%s Illegal IDENT\n", string);
 		errcnt++;
 	}
 	else if (err == overst) {
-		printf("**Error**\t\t\t%s over 12 words", string);
+		printf("**Error**\t\t\t%s over 12 words\n", string);
 		errcnt++;
 	}
 	//else if (err == illsp) {
@@ -55,7 +55,7 @@ void reporterror(char* string) {
 		printf("TIDENT\t");
 		Symboltable(string);
 		if(err==noerror){
-			printf("%-11d\t",STindex);
+			printf("%11d\t\t",STindex);
 			printf("%s\n", string);
 		}
 	}
