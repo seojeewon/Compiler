@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tn.h"
-#include "glob.h"
+#include "global.h"
 
 #define STsize 1000  //size of string table
 #define HTsize 100	//size of hash table
@@ -49,27 +49,14 @@ char input;
 void PrintError(enum errorTypes err)
 {
 	switch (err) {
-	case overfl:
-		nextfree = nextid;
-		// printf("...Error...   OVERFLOW ");
-		// PrintHStable();
-		// exit(0);
-		break;
 	case overst:
-		// printf("...Error... ");
-		// while (input != EOF && (isLetter(input) || isDigit(input))) {
-		// 	printf("%c", input);
-		// 	input = fgetc(fp);
-		// }
-		// printf(" too long identifier \n");
+		nextfree = nextid;
 		break;
+		
 	case illid:
-		// printf("...Error... ");
-		// int index = nextid;
-		// while (ST[index] != '\0') {
-		// 	printf("%c", ST[index++]);
-		// }
-		// printf(" identifier containing illegal character\n");
+		break;
+	
+	case overfl:
 		break;
 	}
 }
