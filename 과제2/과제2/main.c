@@ -1,6 +1,6 @@
 /*
-* main.c - °¢ token¿¡ ´ëÇÑ Ãâ·Â
-* programmer-±è¼­¿µ, ±èÈ¿Áø, ¼­Áö¿ø, ¼ÕÈ¿¿ø
+* main.c - ï¿½ï¿½ tokenï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+* programmer-ï¿½è¼­ï¿½ï¿½, ï¿½ï¿½È¿ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½È¿ï¿½ï¿½
 */
 
 #include <stdio.h>
@@ -20,6 +20,7 @@ void countline(char* string) {
 		i++;
 	}
 }
+
 
 void printtoken(enum tokentypes tn) {
 	if (tn == TLINE) {

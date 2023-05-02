@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tn.h"
-#include "glob.h"
+#include "global.h"
 
 #define STsize 1000  //size of string table
 #define HTsize 100	//size of hash table
