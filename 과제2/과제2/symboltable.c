@@ -1,39 +1,16 @@
-/****************************************************************************************************************
+/*
+* symboltable.c - Hashtable Implementation (STsize  = 1000)
+* programmer - 김서영, 김효진, 서지원, 손효원
+* date - 5/2/2023
+*/
 
-Hashtable Implementation (STsize  = 1000)
-=========================================
-
-
-Programmer  :   Byoungju Choi, Jihyun Park
-
-Date		:	2023/03/30
-
-Description :
-
-Input	:		A file consisting of identifiers seperated by spaces,tab characters,newlines and punctuation marks.
-				An identifier is a string of letters and digits,starting with a letter.
-
-Output	:	The identifier,its index in the stringtable and whether entered or present.
-			Prints error message for illegal identifier(starting with a digit, too long identifier, containing illegal characters) and overflow.
-			Prints the hashtable before terminating. Simply write out hashcode and the list of identifiers
-			associated with each hashcode, but only for non-empty lists.
-			Finally,print out the number of characters used up in ST.
-
-Grobal variations :
-				ST - Array of string table
-				HT - Array of list head of hashtable
-				letters - Set of letters A..Z, a..z
-				digits - Set of digits 0..9
-				seperators - null , . ; : ? ! \t \n
-
-*****************************************************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "tn.h"
+#include "glob.h"
 
-#define FILE_NAME "testdata.txt"
-
-#define STsize 10  //size of string table
+#define STsize 1000  //size of string table
 #define HTsize 100	//size of hash table
 
 #define FALSE 0
@@ -42,7 +19,7 @@ Grobal variations :
 #define isLetter(x) ( ((x) >= 'a' && (x) <='z') || ((x) >= 'A' && (x) <= 'Z' || (x) == '_') )
 #define isDigit(x) ( (x) >= '0' && (x) <= '9' )
 
-#define MAX_LEN		12
+#define MAX_LEN	12
 
 typedef struct HTentry* HTpointer;
 typedef struct HTentry {
@@ -50,7 +27,7 @@ typedef struct HTentry {
 	HTpointer next;  //pointer to next identifier
 } HTentry;
 
-enum errorTypes { noerror, illid, illleng, overst,illid_digit };;
+enum errorTypes { noerror, illid, illleng, overst, illid_digit };;
 typedef enum errorTypes ERRORtypes;
 
 char seperators[] = " .,;:?!\t\n";
@@ -70,13 +47,6 @@ ERRORtypes err;
 FILE* fp;   //to be a pointer to FILE 
 char input;
 
-//Initialize - open input file
-void initialize()
-{
-	fp = fopen(FILE_NAME, "r");
-	input = fgetc(fp);
-}
-
 //isSerperator  -  distinguish the seperator
 //Returns 1 if seperator, otherwise returns 0
 int isSeperator(char c)
@@ -92,41 +62,6 @@ int isSeperator(char c)
 	return 0;
 }
 
-//printHeading	 -		Print the heading
-void PrintHeading()
-{
-	printf("\n\n");
-	printf("  -----------      ------------ \n");
-	printf("  Index in ST       identifier  \n");
-	printf("  -----------      ------------ \n");
-	printf("\n");
-}
-
-/*PrintHStable     -   	Prints the hash table.write out the hashcode and the list of identifiers
-						associated with each hashcode,but only for non-empty lists.
-						Print out the number of characters used up in ST. */
-void PrintHStable()
-{
-	int i, j;
-	HTpointer here;
-
-	printf("\n\n\n\n\n [[  HASH TABLE ]] \n\n");
-
-	for (i = 0; i < HTsize; i++)
-		if (HT[i] != NULL) { // non-empty 
-			printf("  Hash Code %3d : ", i);
-			for (here = HT[i]; here != NULL; here = here->next) {
-				j = here->index;
-				while (ST[j] != '\0' && j < STsize)
-					printf("%c", ST[j++]);
-				printf("\t");
-			}
-			printf("\n");
-		}
-
-	printf("\n\n\n < %5d characters are used in the string table >\n", nextfree);
-}
-
 /* PrintError    - 	Print out error messages
 			overst :  overflow in ST. print the hashtable and abort
 			illid_digit    : illegal identifier (start with digit)
@@ -137,33 +72,33 @@ void PrintError(ERRORtypes err)
 	switch (err) {
 	case overst:
 		nextfree = nextid;
-		printf("...Error...   OVERFLOW ");
-		PrintHStable();
-		exit(0);
+		// printf("...Error...   OVERFLOW ");
+		// PrintHStable();
+		// exit(0);
 		break;
 	case illleng:
-		printf("...Error... ");
-		while (input != EOF && (isLetter(input) || isDigit(input))) {
-			printf("%c", input);
-			input = fgetc(fp);
-		}
-		printf(" too long identifier \n");
+		// printf("...Error... ");
+		// while (input != EOF && (isLetter(input) || isDigit(input))) {
+		// 	printf("%c", input);
+		// 	input = fgetc(fp);
+		// }
+		// printf(" too long identifier \n");
 		break;
 	case illid:
-		printf("...Error... ");
-		int index = nextid;
-		while (ST[index] != '\0') {
-			printf("%c", ST[index++]);
-		}
-		printf(" identifier containing illegal character\n");
+		// printf("...Error... ");
+		// int index = nextid;
+		// while (ST[index] != '\0') {
+		// 	printf("%c", ST[index++]);
+		// }
+		// printf(" identifier containing illegal character\n");
 		break;
 	case illid_digit:
-		printf("...Error... ");
-		while (input != EOF && (isLetter(input) || isDigit(input))) {
-			printf("%c", input);
-			input = fgetc(fp);
-		}
-		printf(" start with digit \n");
+		// printf("...Error... ");
+		// while (input != EOF && (isLetter(input) || isDigit(input))) {
+		// 	printf("%c", input);
+		// 	input = fgetc(fp);
+		// }
+		// printf(" start with digit \n");
 		break;
 	}
 }
@@ -295,15 +230,12 @@ void ADDHT(int hscode)
 			Print the identifier,its index in ST, and whether it was entered or present.
 			Print out the hashtable,and number of characters used up in ST
 */
-int main()
+void Symboltable(char* str)
 {
-	int i;
-	PrintHeading();
-	initialize();
-
-	while (input != EOF) {
+	input = *str;
+	while (input != '\0') {
 		err = noerror;
-		SkipSeperators();
+		// SkipSeperators();
 		ReadID();
 		if (err == noerror) {
 			if (nextfree == STsize) {
@@ -316,20 +248,12 @@ int main()
 			LookupHS(nextid, hashcode);
 
 			if (!found) {
-				printf("%6d         ", nextid);
-				for (i = nextid; i < nextfree - 1; i++)
-					printf("%c", ST[i]);
-				printf("          (entered)\n");
 				ADDHT(hashcode);
 			}
-			else {
-				printf("%6d         ", sameid);
-				for (i = nextid; i < nextfree - 1; i++)
-					printf("%c", ST[i]);
-				printf("          (already existed)\n");
+			else {	// already existed
 				nextfree = nextid;
 			}
 		}
+		input = *++str;
 	}
-	PrintHStable();
 }
