@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tn.h"
-#include "glob.h"
+#include "global.h"
 
 #define STsize 1000  //size of string table
 #define HTsize 100	//size of hash table
@@ -27,8 +27,8 @@ typedef struct HTentry {
 	HTpointer next;  //pointer to next identifier
 } HTentry;
 
-enum errorTypes { noerror, illid, illleng, overst, illid_digit };;
 typedef enum errorTypes ERRORtypes;
+ERRORtypes err;
 
 char seperators[] = " .,;:?!\t\n";
 
@@ -44,7 +44,6 @@ int found;  //for the previous occurrence of an identifie
 
 ERRORtypes err;
 
-FILE* fp;   //to be a pointer to FILE 
 char input;
 
 //isSerperator  -  distinguish the seperator
@@ -76,13 +75,7 @@ void PrintError(ERRORtypes err)
 		// PrintHStable();
 		// exit(0);
 		break;
-	case illleng:
-		// printf("...Error... ");
-		// while (input != EOF && (isLetter(input) || isDigit(input))) {
-		// 	printf("%c", input);
-		// 	input = fgetc(fp);
-		// }
-		// printf(" too long identifier \n");
+	
 		break;
 	case illid:
 		// printf("...Error... ");
@@ -92,13 +85,8 @@ void PrintError(ERRORtypes err)
 		// }
 		// printf(" identifier containing illegal character\n");
 		break;
-	case illid_digit:
-		// printf("...Error... ");
-		// while (input != EOF && (isLetter(input) || isDigit(input))) {
-		// 	printf("%c", input);
-		// 	input = fgetc(fp);
-		// }
-		// printf(" start with digit \n");
+	
+	case overfl:
 		break;
 	}
 }
@@ -143,7 +131,7 @@ void ReadID()
 				err = illid;
 			}
 		}
-		if (count >= MAX_LEN) {
+		if (count >= MAX_LEN) {	
 			err = illleng;
 			ST[nextfree] = '\0';
 			PrintError(err);
