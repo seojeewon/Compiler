@@ -11,5 +11,5 @@ enum tokentypes {
 };
 
 enum errorTypes {
-	noerror, illsp, illid, overst, overfl, illch
-};
+	noerror, illid, overst, overfl
+};	//illid: identifier 오류, overst: 12자 이상 identifier, overfl: ST꽉참
