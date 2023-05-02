@@ -44,6 +44,7 @@ int found;  //for the previous occurrence of an identifie
 
 ERRORtypes err;
 
+FILE* fp;   //to be a pointer to FILE 
 char input;
 
 //isSerperator  -  distinguish the seperator
@@ -114,13 +115,13 @@ void ReadID()
 	int count = 0;
 	nextid = nextfree;
 	if (isDigit(input)) {
-		err = illid_digit;
+		err = illid;
 		PrintError(err);
 	}
 	else {
 		while (input != EOF && !isSeperator(input)) {
 			if (nextfree == STsize) {
-				err = overst;
+				err = overfl;
 				PrintError(err);
 			}
 			ST[nextfree++] = input;
@@ -131,8 +132,8 @@ void ReadID()
 				err = illid;
 			}
 		}
-		if (count >= MAX_LEN) {	
-			err = illleng;
+		if (count >= MAX_LEN) {
+			err = overst;
 			ST[nextfree] = '\0';
 			PrintError(err);
 			nextfree = nextid;
@@ -227,7 +228,7 @@ void Symboltable(char* str)
 		ReadID();
 		if (err == noerror) {
 			if (nextfree == STsize) {
-				err = overst;
+				err = overfl;
 				PrintError(err);
 			}
 			ST[nextfree++] = '\0';
