@@ -21,6 +21,8 @@
 
 #define MAX_LEN	12
 
+extern void printerror(enum errorTypes err, char* str);
+
 typedef struct HTentry* HTpointer;
 typedef struct HTentry {
 	int index;  //index of identifier in ST
@@ -47,17 +49,18 @@ char input;
 			illid_digit    : illegal identifier (start with digit)
 			illid_long	: illegal identifier (too long identifier)
 			illid_illch	: illegal identifier (containing illegal characters) */
-void PrintError(enum errorTypes err)
+void PrintError(enum errorTypes err, char* str)
 {
 	switch (err) {
 	case overst:
 		nextfree = nextid;
+		printerror(err, str);
 		break;
-
 	case illid:
+	printerror(err, str);
 		break;
-
 	case overfl:
+	printerror(err, str);
 		break;
 	}
 }
@@ -72,13 +75,13 @@ void ReadID(char* str)
 	nextid = nextfree;
 	if (isDigit(input)) {
 		err = illid;
-		PrintError(err);
+		PrintError(err, str);
 	}
 	else {
 		while (input != '\0') {
 			if (nextfree == STsize) {
 				err = overfl;
-				PrintError(err);
+				PrintError(err, str);
 			}
 			ST[nextfree++] = input;
 			input = *++str;
@@ -91,12 +94,12 @@ void ReadID(char* str)
 		if (count >= MAX_LEN) {
 			err = overst;
 			ST[nextfree] = '\0';
-			PrintError(err);
+			PrintError(err, str);
 			nextfree = nextid;
 		}
 		if (err == illid) {
 			ST[nextfree] = '\0';
-			PrintError(err);
+			PrintError(err, str);
 			nextfree = nextid;
 		}
 	}
@@ -186,7 +189,7 @@ void Symboltable(char* str)
 	if (err == noerror) {
 		if (nextfree == STsize) {
 			err = overfl;
-			PrintError(err);
+			PrintError(err, str);
 		}
 		ST[nextfree++] = '\0';
 
