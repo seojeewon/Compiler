@@ -27,8 +27,7 @@ typedef struct HTentry {
 	HTpointer next;  //pointer to next identifier
 } HTentry;
 
-enum errorTypes { noerror, illid, illleng, overst, illid_digit };;
-typedef enum errorTypes ERRORtypes;
+enum errorTypes err;
 
 char seperators[] = " .,;:?!\t\n";
 
@@ -41,8 +40,6 @@ int hashcode;  //hash code of identifier
 int sameid;  //first index of identifier
 
 int found;  //for the previous occurrence of an identifie
-
-ERRORtypes err;
 
 FILE* fp;   //to be a pointer to FILE 
 char input;
@@ -67,16 +64,16 @@ int isSeperator(char c)
 			illid_digit    : illegal identifier (start with digit)
 			illid_long	: illegal identifier (too long identifier)
 			illid_illch	: illegal identifier (containing illegal characters) */
-void PrintError(ERRORtypes err)
+void PrintError(enum errorTypes err)
 {
 	switch (err) {
-	case overst:
+	case overfl:
 		nextfree = nextid;
 		// printf("...Error...   OVERFLOW ");
 		// PrintHStable();
 		// exit(0);
 		break;
-	case illleng:
+	case overst:
 		// printf("...Error... ");
 		// while (input != EOF && (isLetter(input) || isDigit(input))) {
 		// 	printf("%c", input);
@@ -91,14 +88,6 @@ void PrintError(ERRORtypes err)
 		// 	printf("%c", ST[index++]);
 		// }
 		// printf(" identifier containing illegal character\n");
-		break;
-	case illid_digit:
-		// printf("...Error... ");
-		// while (input != EOF && (isLetter(input) || isDigit(input))) {
-		// 	printf("%c", input);
-		// 	input = fgetc(fp);
-		// }
-		// printf(" start with digit \n");
 		break;
 	}
 }
@@ -126,13 +115,13 @@ void ReadID()
 	int count = 0;
 	nextid = nextfree;
 	if (isDigit(input)) {
-		err = illid_digit;
+		err = illid;
 		PrintError(err);
 	}
 	else {
 		while (input != EOF && !isSeperator(input)) {
 			if (nextfree == STsize) {
-				err = overst;
+				err = overfl;
 				PrintError(err);
 			}
 			ST[nextfree++] = input;
@@ -144,7 +133,7 @@ void ReadID()
 			}
 		}
 		if (count >= MAX_LEN) {
-			err = illleng;
+			err = overst;
 			ST[nextfree] = '\0';
 			PrintError(err);
 			nextfree = nextid;
@@ -239,7 +228,7 @@ void Symboltable(char* str)
 		ReadID();
 		if (err == noerror) {
 			if (nextfree == STsize) {
-				err = overst;
+				err = overfl;
 				PrintError(err);
 			}
 			ST[nextfree++] = '\0';
