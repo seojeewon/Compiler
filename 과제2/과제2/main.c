@@ -1,15 +1,15 @@
 ﻿/*
-* main.c - �� token�� ���� ���
-* programmer-�輭��, ��ȿ��, ������, ��ȿ��
+* main.c - 각 token에 대한 출력
+* programmer-김서영, 김효진, 서지원, 손효원
+* date - 5/2/2023
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "tn.h"	//token name define
-//#include "global.h"
 
-//extern void SkipSeperators();
 extern void reporterror(char* string);
+void printerror(enum errorType err, char* string);
 extern yylex();
 extern int yywrap();
 extern char* yytext;
@@ -30,6 +30,10 @@ void printtoken(enum tokentypes tn) {
 	if (tn == TLINE) {
 		line++;
 		return;
+	}
+	else if (tn == TERROR) {
+		printf("%-11d\t", line);
+		printerror(illid, yytext);
 	}
 	else {
 		printf("%-11d\t", line);
@@ -63,15 +67,15 @@ void printtoken(enum tokentypes tn) {
 			break;
 		case TASSIGN: printf("TASSIGN\t\t\t\t%s\n", yytext);
 			break;
-		case TADDASSIGN: printf("TADDASSIGN\t\t\t\t%s\n", yytext);
+		case TADDASSIGN: printf("TADDASSIGN\t\t\t%s\n", yytext);
 			break;
-		case TSUBASSIGN: printf("TSUBASSIGN\t\t\t\t%s\n", yytext);
+		case TSUBASSIGN: printf("TSUBASSIGN\t\t\t%s\n", yytext);
 			break;
-		case TMULASSIGN: printf("TMULASSIGN\t\t\t\t%s\n", yytext);
+		case TMULASSIGN: printf("TMULASSIGN\t\t\t%s\n", yytext);
 			break;
-		case TDIVASSIGN: printf("TDIVASSIGN\t\t\t\t%s\n", yytext);
+		case TDIVASSIGN: printf("TDIVASSIGN\t\t\t%s\n", yytext);
 			break;
-		case TMODASSIGN: printf("TMODASSIGN\t\t\t\t%s\n", yytext);
+		case TMODASSIGN: printf("TMODASSIGN\t\t\t%s\n", yytext);
 			break;
 		case TNOT: printf("TNOT\t\t\t\t%s\n", yytext);
 			break;
@@ -107,9 +111,9 @@ void printtoken(enum tokentypes tn) {
 			break;
 		case TRBRACE: printf("TRBRACE\t\t\t\t%s\n", yytext);
 			break;
-		case TLBRACKET: printf("TLBRACKET\t\t\t\t%s\n", yytext);
+		case TLBRACKET: printf("TLBRACKET\t\t\t%s\n", yytext);
 			break;
-		case TRBRACKET: printf("TRBRACKET\t\t\t\t%s\n", yytext);
+		case TRBRACKET: printf("TRBRACKET\t\t\t%s\n", yytext);
 			break;
 		case TNUMBER: printf("TNUMBER\t\t\t\t%s\n", yytext);
 			break;
@@ -121,8 +125,7 @@ void printtoken(enum tokentypes tn) {
 			break;
 		case TSQUOTE: printf("TSQUOTE\t\t\t\t%s\n", yytext);
 			break;
-		default:
-			break;
+		
 		}
 	}
 	return;
@@ -138,16 +141,13 @@ void main() {
 	printf("============================================================\n");
 
 	//scan tokens using the Flex lexical analyzer
-	while ((tn = yylex()) != EOF) {
-		if(yywrap==1){
-			break;
-		}
+	while ((tn = yylex()) != TEOF) {
 		printtoken(tn);
 	}
 
 	if (errcnt == 0)
-		printf("\n\n*******************No errors defected");
+		printf("\n\n****************************************No errors defected");
 	else
-		printf("\n\n*******************%d errors detected\n\n", errcnt);
-	printf("============================================================\n");
+		printf("\n\n****************************************%d errors detected\n\n", errcnt);
+	printf("\n============================================================\n");
 }

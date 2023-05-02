@@ -67,14 +67,14 @@ D	[0-9]
 
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
 {A}({A}|{D})* 			return(TIDENT);
-{D}+({A}|{D})+			{err=illid; printerror(err, yytext);}
+{D}+({A}|{D})+			return(TIDENT);
 
 
 "/*"([^*]|"*"+[^*/])*"*"+"/" 		return(TCOMMENT_TEXT);
 "//".* 				return(TCOMMENT_LINE);
 [ \t]				;
 "\n"				return(TLINE);
-.				{err=illid; printerror(err, yytext);}
+.				return(TERROR);
 %%
 
 int yywrap()

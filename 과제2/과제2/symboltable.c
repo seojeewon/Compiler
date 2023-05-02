@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tn.h"
-//#include "global.h"
+
 
 #define STsize 1000  //size of string table
 #define HTsize 100	//size of hash table
@@ -46,10 +46,10 @@ char input;
 char* string;	// input string
 
 /* PrintError    - 	Print out error messages
-			overst :  overflow in ST. print the hashtable and abort
-			illid_digit    : illegal identifier (start with digit)
-			illid_long	: illegal identifier (too long identifier)
-			illid_illch	: illegal identifier (containing illegal characters) */
+			overst : identifier that over 12 characters
+			illid: illegal identifier
+			overfl: overflow in ST. print the hashtable and abort
+ */
 void PrintError(enum errorTypes err)
 {
 	switch (err) {
@@ -173,7 +173,7 @@ void ADDHT(int hscode)
 	HT[hscode] = ptr;
 }
 
-/* MAIN		-	Read the identifier from the file directly into ST.
+/* Symboltable		-	Read the identifier from the file directly into ST.
 			Compute its hashcode.
 			Look up the idetifier in hashtable HT[hashcode]
 			If matched, delete the identifier from ST and print ST-index
