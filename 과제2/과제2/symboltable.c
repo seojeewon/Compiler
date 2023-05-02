@@ -43,24 +43,25 @@ int STindex;
 int found;  //for the previous occurrence of an identifie
 
 char input;
+char* string;	// input string
 
 /* PrintError    - 	Print out error messages
 			overst :  overflow in ST. print the hashtable and abort
 			illid_digit    : illegal identifier (start with digit)
 			illid_long	: illegal identifier (too long identifier)
 			illid_illch	: illegal identifier (containing illegal characters) */
-void PrintError(enum errorTypes err, char* str)
+void PrintError(enum errorTypes err)
 {
 	switch (err) {
 	case overst:
 		nextfree = nextid;
-		printerror(err, str);
+		printerror(err, string);
 		break;
 	case illid:
-	printerror(err, str);
+	printerror(err, string);
 		break;
 	case overfl:
-	printerror(err, str);
+	printerror(err, string);
 		break;
 	}
 }
@@ -75,13 +76,13 @@ void ReadID(char* str)
 	nextid = nextfree;
 	if (isDigit(input)) {
 		err = illid;
-		PrintError(err, str);
+		PrintError(err);
 	}
 	else {
 		while (input != '\0') {
 			if (nextfree == STsize) {
 				err = overfl;
-				PrintError(err, str);
+				PrintError(err);
 			}
 			ST[nextfree++] = input;
 			input = *++str;
@@ -94,12 +95,12 @@ void ReadID(char* str)
 		if (count >= MAX_LEN) {
 			err = overst;
 			ST[nextfree] = '\0';
-			PrintError(err, str);
+			PrintError(err);
 			nextfree = nextid;
 		}
 		if (err == illid) {
 			ST[nextfree] = '\0';
-			PrintError(err, str);
+			PrintError(err);
 			nextfree = nextid;
 		}
 	}
@@ -183,13 +184,14 @@ void ADDHT(int hscode)
 */
 void Symboltable(char* str)
 {
+	string = str;
 	input = *str;
 	err = noerror;
 	ReadID(str);
 	if (err == noerror) {
 		if (nextfree == STsize) {
 			err = overfl;
-			PrintError(err, str);
+			PrintError(err);
 		}
 		ST[nextfree++] = '\0';
 
