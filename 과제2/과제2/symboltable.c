@@ -29,8 +29,6 @@ typedef struct HTentry {
 
 enum errorTypes err;
 
-char seperators[] = " .,;:?!\t\n";
-
 HTpointer HT[HTsize];
 char ST[STsize];
 
@@ -41,23 +39,7 @@ int sameid;  //first index of identifier
 
 int found;  //for the previous occurrence of an identifie
 
-FILE* fp;   //to be a pointer to FILE 
 char input;
-
-//isSerperator  -  distinguish the seperator
-//Returns 1 if seperator, otherwise returns 0
-int isSeperator(char c)
-{
-	int i;
-	int sep_len;
-
-	sep_len = strlen(seperators);
-	for (i = 0; i < sep_len; i++) {
-		if (c == seperators[i])
-			return 1;
-	}
-	return 0;
-}
 
 /* PrintError    - 	Print out error messages
 			overst :  overflow in ST. print the hashtable and abort
@@ -92,25 +74,11 @@ void PrintError(enum errorTypes err)
 	}
 }
 
-/* Skip Seperators -   	skip over strings of spaces,tabs,newlines, . , ; : ? !
-						if illegal seperators,print out error message.*/
-
-void SkipSeperators()
-{
-	while (input != EOF && !(isLetter(input) || isDigit(input))) {
-		if (!isSeperator(input)) {
-			err = illid;
-			PrintError(err);
-		}
-		input = fgetc(fp);
-	}
-}
-
 /*ReadIO 	- 	Read identifier from the input file the string table ST directly into
 			ST(append it to the previous identifier).
 			An identifier is a string of letters and digits, starting with a letter.
 			If first letter is digit, print out error message. */
-void ReadID()
+void ReadID(char* str)
 {
 	int count = 0;
 	nextid = nextfree;
@@ -119,16 +87,16 @@ void ReadID()
 		PrintError(err);
 	}
 	else {
-		while (input != EOF && !isSeperator(input)) {
+		while (input != '\0') {
 			if (nextfree == STsize) {
 				err = overfl;
 				PrintError(err);
 			}
 			ST[nextfree++] = input;
-			input = fgetc(fp);
+			input = *++str;
 			count++;
 
-			if (!(isLetter(input) || isDigit(input) || isSeperator(input)) && input != EOF) {
+			if (!(isLetter(input) || isDigit(input)) && input != '\0') {
 				err = illid;
 			}
 		}
@@ -222,27 +190,23 @@ void ADDHT(int hscode)
 void Symboltable(char* str)
 {
 	input = *str;
-	while (input != '\0') {
-		err = noerror;
-		// SkipSeperators();
-		ReadID();
-		if (err == noerror) {
-			if (nextfree == STsize) {
-				err = overfl;
-				PrintError(err);
-			}
-			ST[nextfree++] = '\0';
-
-			ComputeHS(nextid, nextfree);
-			LookupHS(nextid, hashcode);
-
-			if (!found) {
-				ADDHT(hashcode);
-			}
-			else {	// already existed
-				nextfree = nextid;
-			}
+	err = noerror;
+	ReadID(str);
+	if (err == noerror) {
+		if (nextfree == STsize) {
+			err = overfl;
+			PrintError(err);
 		}
-		input = *++str;
+		ST[nextfree++] = '\0';
+
+		ComputeHS(nextid, nextfree);
+		LookupHS(nextid, hashcode);
+
+		if (!found) {
+			ADDHT(hashcode);
+		}
+		else {	// already existed
+			nextfree = nextid;
+		}
 	}
 }
