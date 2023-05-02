@@ -27,10 +27,7 @@ typedef struct HTentry {
 	HTpointer next;  //pointer to next identifier
 } HTentry;
 
-enum errorTypes { noerror, illid, illleng, overst, illid_digit };;
-typedef enum errorTypes ERRORtypes;
-
-char seperators[] = " .,;:?!\t\n";
+enum errorTypes err;
 
 HTpointer HT[HTsize];
 char ST[STsize];
@@ -42,78 +39,25 @@ int sameid;  //first index of identifier
 
 int found;  //for the previous occurrence of an identifie
 
-ERRORtypes err;
-
-FILE* fp;   //to be a pointer to FILE 
 char input;
-
-//isSerperator  -  distinguish the seperator
-//Returns 1 if seperator, otherwise returns 0
-int isSeperator(char c)
-{
-	int i;
-	int sep_len;
-
-	sep_len = strlen(seperators);
-	for (i = 0; i < sep_len; i++) {
-		if (c == seperators[i])
-			return 1;
-	}
-	return 0;
-}
 
 /* PrintError    - 	Print out error messages
 			overst :  overflow in ST. print the hashtable and abort
 			illid_digit    : illegal identifier (start with digit)
 			illid_long	: illegal identifier (too long identifier)
 			illid_illch	: illegal identifier (containing illegal characters) */
-void PrintError(ERRORtypes err)
+void PrintError(enum errorTypes err)
 {
 	switch (err) {
 	case overst:
 		nextfree = nextid;
-		// printf("...Error...   OVERFLOW ");
-		// PrintHStable();
-		// exit(0);
 		break;
-	case illleng:
-		// printf("...Error... ");
-		// while (input != EOF && (isLetter(input) || isDigit(input))) {
-		// 	printf("%c", input);
-		// 	input = fgetc(fp);
-		// }
-		// printf(" too long identifier \n");
-		break;
+		
 	case illid:
-		// printf("...Error... ");
-		// int index = nextid;
-		// while (ST[index] != '\0') {
-		// 	printf("%c", ST[index++]);
-		// }
-		// printf(" identifier containing illegal character\n");
 		break;
-	case illid_digit:
-		// printf("...Error... ");
-		// while (input != EOF && (isLetter(input) || isDigit(input))) {
-		// 	printf("%c", input);
-		// 	input = fgetc(fp);
-		// }
-		// printf(" start with digit \n");
+	
+	case overfl:
 		break;
-	}
-}
-
-/* Skip Seperators -   	skip over strings of spaces,tabs,newlines, . , ; : ? !
-						if illegal seperators,print out error message.*/
-
-void SkipSeperators()
-{
-	while (input != EOF && !(isLetter(input) || isDigit(input))) {
-		if (!isSeperator(input)) {
-			err = illid;
-			PrintError(err);
-		}
-		input = fgetc(fp);
 	}
 }
 
@@ -121,30 +65,30 @@ void SkipSeperators()
 			ST(append it to the previous identifier).
 			An identifier is a string of letters and digits, starting with a letter.
 			If first letter is digit, print out error message. */
-void ReadID()
+void ReadID(char* str)
 {
 	int count = 0;
 	nextid = nextfree;
 	if (isDigit(input)) {
-		err = illid_digit;
+		err = illid;
 		PrintError(err);
 	}
 	else {
-		while (input != EOF && !isSeperator(input)) {
+		while (input != '\0') {
 			if (nextfree == STsize) {
-				err = overst;
+				err = overfl;
 				PrintError(err);
 			}
 			ST[nextfree++] = input;
-			input = fgetc(fp);
+			input = *++str;
 			count++;
 
-			if (!(isLetter(input) || isDigit(input) || isSeperator(input)) && input != EOF) {
+			if (!(isLetter(input) || isDigit(input)) && input != '\0') {
 				err = illid;
 			}
 		}
 		if (count >= MAX_LEN) {
-			err = illleng;
+			err = overst;
 			ST[nextfree] = '\0';
 			PrintError(err);
 			nextfree = nextid;
@@ -233,27 +177,23 @@ void ADDHT(int hscode)
 void Symboltable(char* str)
 {
 	input = *str;
-	while (input != '\0') {
-		err = noerror;
-		// SkipSeperators();
-		ReadID();
-		if (err == noerror) {
-			if (nextfree == STsize) {
-				err = overst;
-				PrintError(err);
-			}
-			ST[nextfree++] = '\0';
-
-			ComputeHS(nextid, nextfree);
-			LookupHS(nextid, hashcode);
-
-			if (!found) {
-				ADDHT(hashcode);
-			}
-			else {	// already existed
-				nextfree = nextid;
-			}
+	err = noerror;
+	ReadID(str);
+	if (err == noerror) {
+		if (nextfree == STsize) {
+			err = overfl;
+			PrintError(err);
 		}
-		input = *++str;
+		ST[nextfree++] = '\0';
+
+		ComputeHS(nextid, nextfree);
+		LookupHS(nextid, hashcode);
+
+		if (!found) {
+			ADDHT(hashcode);
+		}
+		else {	// already existed
+			nextfree = nextid;
+		}
 	}
 }
