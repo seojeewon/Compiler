@@ -11,6 +11,7 @@
 
 typedef enum errorTypes ERRORtypes;
 ERRORtypes err;
+extern reporterror(char* string);
 
 %}
 
@@ -59,21 +60,14 @@ D	[0-9]
 
 "("				return(TLPAREN);
 ")"				return(TRPAREN);
-"."				return(TCOMMA);
+","				return(TCOMMA);
 ";"				return(TSEMI);
 "{"				return(TLBRACE);
 "}"				return(TRBRACE);
 "["				return(TLBRACKET);
 "]"				return(TRBRACKET);
 
-{A}({A}|{D})* 	{if(yyleng>12){
-					err=overst; return(TERROR);}
-				else{
-					SymbolTable(yytext); 
-					//SymbolTable(identifier)넣으면 처리해줘야함
-					if(err == overst){
-						return(TERROR);}
-					else{return(TIDENT);}}}
+{A}({A}|{D})* 	reporterror(yytext);
 ([1-9][0-9]*|0([0-7]+|(x|X)[0-9A-Fa-f]*)?) 	return(TNUMBER);
 {D}+({A}|{D})+			{err=illid; return(TERROR);}
 

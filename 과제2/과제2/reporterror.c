@@ -8,18 +8,18 @@
 #include "global.h"
 #define isWord(x) ((((x>='a'&&(x)<='z') || ((x)>='A'&&(x)<='Z')) || (x=='_')))
 #define isNum(x) ((x) >= '0' && (x) <= '9')
-extern void Symboltable(char* str);
+extern void SymbolTable(char* string);
 typedef enum errorTypes ERROR;
-ERROR errr = noerror;
+ERROR err = noerror;
 
 int errflag = 0;
 errcnt = 0;
 
-//PrintError ÇÔ¼ö: ERRORtypes °´Ã¼ ³»¿ëÀ» ¹ÙÅÁÀ¸·Î ERROR Á¤º¸¸¦ Ãâ·Â
-// error: illsp(Çã¿ëµÇÁö ¾Ê´Â ¹®ÀÚ »ç¿ëÇÑ ½Äº°ÀÚ ¿¡·¯)
-//        illid(¼ýÀÚ¿Í ÇÔ²² ½ÃÀÛÇÏ´Â ½Äº°ÀÚ ¿¡·¯)
-//        overst(½Äº°ÀÚ±æÀÌidlenÀ» ³Ñ´Â ½Äº°ÀÚ ¿¡·¯)
-//        overfl(Å©±â·Î overflow ¹ß»ý)
+//PrintError ï¿½Ô¼ï¿½: ERRORtypes ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ERROR ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+// error: illsp(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Äºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+//        illid(ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Äºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+//        overst(ï¿½Äºï¿½ï¿½Ú±ï¿½ï¿½ï¿½idlenï¿½ï¿½ ï¿½Ñ´ï¿½ ï¿½Äºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+//        overfl(Å©ï¿½ï¿½ï¿½ overflow ï¿½ß»ï¿½)
 void printerror(ERROR err, char* string)
 {
 	if (err == illid) {
@@ -30,6 +30,10 @@ void printerror(ERROR err, char* string)
 		printf("**Error**\t\t\t%s over 12 words", string);
 		errcnt++;
 	}
+	//else if (err == illsp) {
+	//	printf("**Error**\t\t%s Illegal Symbol", string);
+	//	errcnt++;
+	//}
 
 	else if (err == overfl) {
 		printf("**Error**\t overflow occured\n");
@@ -38,15 +42,19 @@ void printerror(ERROR err, char* string)
 }
 
 
-//reporterror ÇÔ¼ö: overst(string ±æÀÌ°¡ 12ÀÚ ÀÌ»ó) ¿¡·¯ °¨Áö
+//reporterror ï¿½Ô¼ï¿½: overst(string ï¿½ï¿½ï¿½Ì°ï¿½ 12ï¿½ï¿½ ï¿½Ì»ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 void reporterror(char* string) {
 	if (strlen(string) > 12) {
-		errr = overst;
-		printerror(errr, string);
+		err = overst;
+		printerror(err, string);
 	}
 
 	else {
 		printf("Identifier\t");
-		symtable(string);
+		SymbolTable(string);
+		if(err==noerror){
+			printf("%d\t",nid);
+			printf(string);
+		}
 	}
 }
