@@ -6,7 +6,9 @@
 
 /*김서영 김효진 서지원 손효원*/
 
-
+extern void PrintError(ERRPRtypes err);
+extern yylex();
+extern yyerror(s);
 /*yacc source for Mini C*/
 void semantic(int);
 %}
@@ -19,21 +21,31 @@ void semantic(int);
 %nonassoc TELSE
 
 %%
-mini_c 			: translation_unit				{semantic(1);};
-translation_unit 	: external_dcl					{semantic(2);}
-			| translation_unit external_dcl		{semantic(3);};
-external_dcl 		: function_def					{semantic(4);}
-		  	| declaration					{semantic(5);};
-function_def 		: function_header compound_st		{semantic(6);};
-function_header 	: dcl_spec function_name formal_param	{semantic(7);};
-dcl_spec 		: dcl_specifiers				{semantic(8);};
-dcl_specifiers 		: dcl_specifier					{semantic(9);}
-		 	| dcl_specifiers dcl_specifier			{semantic(10);};
-dcl_specifier 		: type_qualifier					{semantic(11);}
-			| type_specifier				{semantic(12);};
-type_qualifier 		: TCONST					{semantic(13);};
-type_specifier 		: TINT						{semantic(14);}
-		 	| TVOID						{semantic(15);};
+mini_c 			: translation_unit			;
+translation_unit 	: external_dcl					
+			| translation_unit external_dcl		;
+external_dcl 		: function_def					
+		  	| declaration					
+			| TIDENT TSEMI
+			| TIDENT error{
+				yyerrok;
+				PrintError(wrong_stat);
+			};
+function_def 		: function_header compound_st		
+			|function_header error{
+			 previous_id->type=0; //parse error로 정의
+			 yyerrok;
+			 PrintError(wrong_funcdef);
+			};
+function_header 	: dcl_spec function_name formal_param	;
+dcl_spec 		: dcl_specifiers				;
+dcl_specifiers 		: dcl_specifier					
+		 	| dcl_specifiers dcl_specifier			;
+dcl_specifier 		: type_qualifier					
+			| type_specifier				;
+type_qualifier 		: TCONST					{isTypeConst = 1};
+type_specifier 		: TINT						{isTypeInt=1;}
+		 	| TVOID						{isTypeVoid=1;};
 function_name 	: TIDENT						{semantic(16);};
 formal_param 		: '(' opt_formal_param ')' 			{semantic(17);};
 opt_formal_param 	: formal_param_list				{semantic(18);}
