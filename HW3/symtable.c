@@ -14,6 +14,7 @@ char print_ST[STsize];	//ST for printing the results
 int p_nextfree = 0;		//nextfree of print_ST
 int str_length;			//count length of string to print the results nicely
 
+
 /*
  * computeHS() - Compute the hash code of identifier by summing the ordinal values of 
  *             its charactors an then taking the sum modulo the size of HT
@@ -77,9 +78,25 @@ void ADDHT(int hscode)
 	HTpointer ptr;
 
 	ptr = (HTpointer)malloc(sizeof(ptr));
-	ptr->index = nextid;
-	ptr->next = HT[hscode];
-	HT[hscode] = ptr;
+	// 맨 처음에 들어온 identifier
+	if (HT[hscode] == NULL) {
+		ptr->type = 0;
+		ptr->index = nextid;
+		ptr->line = cLine;
+		ptr->next = NULL;
+		HT[hscode] = ptr;		
+		ptr->isConst = 0;
+
+	}
+	else {
+		ptr->type = 0;
+		ptr->index = nextid;
+		ptr->line = cLine;
+		ptr->next = HT[hscode];
+		HT[hscode] = ptr;
+	}
+	current_id = ptr;
+	
 }
 
 /*
@@ -120,4 +137,53 @@ int SymbolTable()
 	}
 	
 	return 1;
+}
+
+void PrintHStable() {
+	HTpointer here;
+	int i, j;
+	printf("\n\t[Hash Table : Identifier Information]\n\n");
+	for (i = 0; i < HTsize; i++) {
+		if (HT[i] != NULL) {
+			here = HT[i];
+			do {
+				printf("\tHash Code %4d : (", i);
+				for (j = here->index; ST[j] != '\0'; j++)
+					printf("%c", ST[j]);
+				printf(" : ");
+				switch (here->type)
+				{
+				case 1:
+					printf("integer scalar variable, line: %d)\n", here->line);
+					break;
+				case 2:
+					printf("char scalar variable, line: %d)\n", here->line);
+					break;
+				case 3:
+					printf("integer array variable, line: %d)\n", here->line);
+					break;
+				case 4:
+					printf("char array variable, line: %d)\n", here->line);
+					break;
+				case 5:
+					printf("function name, return type = int, line: %d)\n", here->line);
+					break;
+				case 6:
+					printf("function name, return type = void, line: %d)\n", here->line);
+					break;
+				case 7:
+					printf("function name, return type = char, line: %d)\n", here->line);
+					break;
+				case 8:
+					printf("function parameter, line: %d)\n", here->line);
+					break;
+				case 9:
+					printf("not defined identifier or function, line: %d)\n", here->line);
+					break;
+				}
+				here = here->next;
+			} while (here != NULL);
+		}
+	}
+
 }

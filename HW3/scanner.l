@@ -8,6 +8,10 @@
 #include <string.h>
 #include "tn.h"
 #include "glob.h"
+
+extern int cLine;
+extern int cErrors;
+
 void PrintError(ERRORtypes err);
 int SymbolTable();
 %}
@@ -21,6 +25,8 @@ int SymbolTable();
 [iI][fF]				{ err = illid_illegal; PrintError(err); return(TERROR); }
 "int"				return(TINT);
 [iI][nN][tT]			{ err = illid_illegal; PrintError(err); return(TERROR); }
+"char"				return(TCHAR);
+[cC][hH][aA][rR]			{ err = illid_illegal; PrintError(err); return(TERROR); }
 "return"				return(TRETURN);
 [rR][eE][tT][uU][rR][nN]		{ err = illid_illegal; PrintError(err); return(TERROR); }
 "void" 				return(TVOID);

@@ -9,27 +9,29 @@
 typedef struct HTentry *HTpointer;
 typedef struct HTentry {	//Hash Table의 구조
 	int line;	//line number
-	char* var_type;	//variable type
-	char isIdent;	//변수인지 함수인지
-	int isPara;	//함수의 parameter인지
-	int index;
+	int type;	//variable type
+	int isConst;	//상수인지
+	int index;	//string table의 index
 	HTpointer next;
 } HTentry;
 
 HTpointer HT[HTsize];
 char ST[STsize];
 
+HTpointer current_id;	//current id
+HTpointer current_tmp;	//pointer
+
 int nextid; 
 int nextfree;
 int hashcode; 
 int sameid;
-int num_err;//number of errors
 int cLine;
+int cErrors;
 //int i, j, cErrors; //?
 
 int found;
 
-enum errorTypes { noerror, illid_digit, illid_long, illid_illch, illid_illegal, overst };
+enum errorTypes { noerror, illid_digit, illid_long, illid_illch, illid_illegal, overst, wrong_stat, wrong_funcdef, noFuncHeader, noParam, noComma, nobrace, nosemi, nobracket, noifcondition, nowhilecondition};
 typedef enum errorTypes ERRORtypes;
 ERRORtypes err;
 
