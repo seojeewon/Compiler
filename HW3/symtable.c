@@ -119,20 +119,10 @@ int SymbolTable()
 	ComputeHS(nextid, nextfree);
 	LookupHS(nextid, hashcode);
 	if (!found) {
-		printf("%6d          TIDENT     %7d\t", cLine, nextid);
-		for (int i = nextid; i< nextfree-1; i++)
-			printf("%c", ST[i]);
-		printf("\t(entered)\n");
-		
 		ADDHT(hashcode);
 		nextid = nextfree;
 	}
 	else {
-		printf("%6d          TIDENT     %7d\t", cLine, sameid);
-		for (int i = nextid; i < nextfree - 1; i++)
-			printf("%c", ST[i]);
-		printf("\t(already existed)\n");
-		
 		nextfree = nextid;
 	}
 	
@@ -151,6 +141,8 @@ void PrintHStable() {
 				for (j = here->index; ST[j] != '\0'; j++)
 					printf("%c", ST[j]);
 				printf(" : ");
+				if (here->isConst == 1)
+					printf("const ");
 				switch (here->type)
 				{
 				case 1:

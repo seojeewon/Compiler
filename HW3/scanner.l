@@ -18,26 +18,26 @@ int SymbolTable();
 
 %%
 "const"				return(TCONST);
-[cC][oO][nN][sS][tT]		{ err = illid_illegal; PrintError(err); return(TERROR); }
+[cC][oO][nN][sS][tT]		{ err = illid_illegal; PrintError(err);}
 "else" 				return(TELSE);
-[eE][lL][sS][eE]			{ err = illid_illegal; PrintError(err); return(TERROR); }
+[eE][lL][sS][eE]			{ err = illid_illegal; PrintError(err);}
 "if" 				return(TIF);
-[iI][fF]				{ err = illid_illegal; PrintError(err); return(TERROR); }
+[iI][fF]				{ err = illid_illegal; PrintError(err);}
 "int"				return(TINT);
-[iI][nN][tT]			{ err = illid_illegal; PrintError(err); return(TERROR); }
+[iI][nN][tT]			{ err = illid_illegal; PrintError(err);}
 "char"				return(TCHAR);
-[cC][hH][aA][rR]			{ err = illid_illegal; PrintError(err); return(TERROR); }
+[cC][hH][aA][rR]			{ err = illid_illegal; PrintError(err);}
 "return"				return(TRETURN);
-[rR][eE][tT][uU][rR][nN]		{ err = illid_illegal; PrintError(err); return(TERROR); }
+[rR][eE][tT][uU][rR][nN]		{ err = illid_illegal; PrintError(err);}
 "void" 				return(TVOID);
-[vV][oO][iI][dD]			{ err = illid_illegal; PrintError(err); return(TERROR); }
+[vV][oO][iI][dD]			{ err = illid_illegal; PrintError(err);}
 "while" 				return(TWHILE);
-[wW][hH][iI][lL][eE]		{ err = illid_illegal; PrintError(err); return(TERROR); }
+[wW][hH][iI][lL][eE]		{ err = illid_illegal; PrintError(err);}
 
-"+" 				return(TPLUS);
-"-" 				return(TMINUS);
-"*" 				return(TSTAR);
-"/" 				return(TSLASH);
+"+" 				return(TADD);
+"-" 				return(TSUB);
+"*" 				return(TMUL);
+"/" 				return(TDIV);
 "%" 				return(TMOD);
 
 "=" 				return(TASSIGN);
@@ -53,8 +53,8 @@ int SymbolTable();
 
 "==" 				return(TEQUAL);
 "!="	 			return(TNOTEQU);
-"<" 				return(TLESS);
-">" 				return(TGREAT);
+"<" 				return(TSMALL);
+">" 				return(TBIG);
 "<=" 				return(TLESSE);
 ">=" 				return(TGREATE);
 
@@ -74,27 +74,27 @@ int SymbolTable();
 
 [A-Za-z_][A-Za-z0-9_]* 		{ 
 					if(yyleng > MAX_LEN)
-						{ err = illid_long; PrintError(err); return(TERROR);}
+						{ err = illid_long; PrintError(err);}
 					else
 						{ SymbolTable(); return(TIDENT);}
 				}
 
 
 
-"//".*				return(TCOMMENT);
+"//".*				;
 "/*"([^*]|\*+[^*/])*\**"*/"		{
 					for(int i=0;i<yyleng;i++)
 						if(yytext[i]=='\n') cLine++;
-					return(TCOMMENT);
+					;
 
 				}
 
 [ \t]			 	;
-"\n" 				{ cLine++; return(TCARR);}
+"\n" 				{ cLine++;}
 
-[0-9]+[A-Za-z0-9_]+ 		{ err = illid_digit; PrintError(err); return(TERROR); }
+[0-9]+[A-Za-z0-9_]+ 		{ err = illid_digit; PrintError(err);}
 
-. 				{ err = illid_illch; PrintError(err); return(TERROR); }
+. 				{ err = illid_illch; PrintError(err);}
 %%
 
 int yywrap()

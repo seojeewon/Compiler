@@ -6,27 +6,27 @@
 #include "glob.h"
 
 
-/*김서영 김효진 서지원 손효원*/
-int isTypeVoid=0;
-int isTypeInt=0;
-int isTypeChar=0;
-int isTypeConst=0;
 
-extern void PrintError(ERRtypes err);
+int isTypeVoid = 0;
+int isTypeInt = 0;
+int isTypeChar = 0;
+int isTypeConst = 0;
+
 extern int yylex();
 extern yyerror(char *s);
 /*yacc source for Mini C*/
-void semantic(int);
+
 %}
 
 %token TIDENT TCHAR TNUMBER TCONST TELSE TIF TEIF TINT TRETURN TVOID TWHILE
 %token TADDASSIGN TSUBASSIGN TMULASSIGN TDIVASSIGN TMODASSIGN
 %token TOR TAND TEQUAL TNOTEQU TGREATE TLESSE TINC TDEC TSMALL TBIG
-%token TADD TSUB TMUL TDIV TMOD TIS TNOT 
+%token TADD TSUB TMUL TDIV TMOD TIS TNOT TASSIGN
 %token TCOMMA TSEMI TLBRACE TRBRACE TLPAREN TRPAREN TLBRACKET TRBRACKET
-%nonassoc TIF_ERROR TIF_CONDITION_ERROR
-%nonassoc TELSE_ERROR TELSE_CONDITION_ERROR
-%nonassoc UIF
+
+%left '+' '-'
+%left '*' '/'
+%right '='
 %nonassoc LOWER_THAN_ELSE
 %nonassoc TELSE
 
@@ -55,7 +55,7 @@ dcl_specifiers 		: dcl_specifier
 		 	| dcl_specifiers dcl_specifier			;
 dcl_specifier 		: type_qualifier					
 			| type_specifier				;
-type_qualifier 		: TCONST					{isTypeConst = 1};
+type_qualifier 		: TCONST					{isTypeConst = 1;};
 type_specifier 		: TINT						{isTypeInt=1; isTypeVoid=0; isTypeChar=0;}
 		 	| TVOID						{isTypeInt=0; isTypeVoid=1; isTypeChar=0;}
 			| TCHAR						{isTypeInt=0; isTypeVoid=0; isTypeChar=1;}
@@ -71,7 +71,7 @@ function_name 	: TIDENT{
 						}
 						else{current_id->type=7;} 	/*return char function name*/
 						isTypeInt=0;
-						isTypeFloat=0;
+						isTypeChar=0;
 						isTypeVoid=0;
 						current_tmp=current_id;
 					}
@@ -98,7 +98,7 @@ formal_param_list 	: param_dcl
 		}
 		|formal_param_list TCOMMA error{
 			yyerrok;
-			PrintError(emptycomma);
+			PrintError(noComma);
 		};
 param_dcl 	: dcl_spec declarator{
 			if(current_id->type == 1){
@@ -144,14 +144,21 @@ init_dcl_list 		: init_declarator
 				PrintError(noComma);
 			};
 init_declarator 	: declarator						
-		| declarator TEQUAL TNUMBER			
+		| declarator TASSIGN TNUMBER			
 		;
 declarator 	: TIDENT
 		{
 			if(current_id->type==0)
 			{
+				if(isTypeConst == 1){
+					current_id->isConst=1;	
+				}
+				else{
+					current_id->isConst=0;
+				}
 				if(isTypeInt == 1) current_id->type=1;		/*integer scalar variable*/
 				if(isTypeChar == 1) current_id->type=2;		/*char scalar variable*/
+				
 			}
 			current_tmp=current_id;
 		}						
@@ -216,7 +223,7 @@ return_st 	: TRETURN opt_expression TSEMI
 expression 	: assignment_exp				
 		;
 assignment_exp 	: logical_or_exp				
-		| unary_exp TEQUAL assignment_exp 		
+		| unary_exp TASSIGN assignment_exp 	%prec TEQUAL	
 		| unary_exp TADDASSIGN assignment_exp 	
 		| unary_exp TSUBASSIGN assignment_exp 	
 		| unary_exp TMULASSIGN assignment_exp 	
@@ -224,7 +231,12 @@ assignment_exp 	: logical_or_exp
 		| unary_exp TMODASSIGN assignment_exp 	
 		;
 logical_or_exp 	: logical_and_exp				
-		| logical_or_exp TOR logical_and_exp 	
+		| logical_or_exp TOR logical_and_exp
+		| logical_or_exp TOR
+		{
+			yyerrok;
+			yyerror(wrong_stat);
+		} 	
 		;
 logical_and_exp 	: equality_exp					
 		| logical_and_exp TAND equality_exp 	

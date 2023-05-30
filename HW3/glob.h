@@ -35,6 +35,8 @@ enum errorTypes { noerror, illid_digit, illid_long, illid_illch, illid_illegal, 
 typedef enum errorTypes ERRORtypes;
 ERRORtypes err;
 
+void PrintError(ERRORtypes err);
+
 #define isLetter(x) ( ((x) >= 'a' && (x) <='z') || ((x) >= 'A' && (x) <= 'Z' || (x) == '_') )
 #define isDigit(x) ( (x) >= '0' && (x) <= '9' )
 
