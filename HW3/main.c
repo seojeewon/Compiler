@@ -19,7 +19,10 @@ void main()
 
 	//print header
 	printf("\n\n\t******MiniC parsing begins******\n");
-	printf("\n\t[Error Report : Error Information]\n");
+	printf("\n\t[Error Report]\n");
+	printf("\t-------------------------------------------------------------------------\n");
+	printf("\tline number\t\t\t\t\t\tError Information\n");
+	printf("\t-------------------------------------------------------------------------\n");
 	yyparse();
 	printf("\n\t******Parsing ends******\n");
 
@@ -28,6 +31,6 @@ void main()
 		PrintHStable();
 	}
 	else {
-		printf("\n\t******%d error(s) detected\n\n");
+		printf("\n\t******%d error(s) detected\n\n", cErrors);
 	}
 }
