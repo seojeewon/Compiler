@@ -58,9 +58,9 @@ void PrintError(ERRORtypes err)
 		printf("%6d          ERROR!!			       		No Function Header\n", cLine);
 		break;
 
-	case noParam:	//보류 파라미터 없을수도 있지 않아?
+	case noParen:
 		cErrors++;
-		printf("%6d          ERROR!!			       		No Function Parameter\n", cLine);
+		printf("%6d          ERROR!!			       		No Function Parenthesis\n", cLine);
 		break;
 
 	case noComma:	

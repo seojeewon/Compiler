@@ -31,7 +31,7 @@ int cErrors;
 
 int found;
 
-enum errorTypes { noerror, illid_digit, illid_long, illid_illch, illid_illegal, overst, wrong_stat, wrong_funcdef, noFuncHeader, noParam, noComma, nobrace, nosemi, nobracket, noifcondition, nowhilecondition};
+enum errorTypes { noerror, illid_digit, illid_long, illid_illch, illid_illegal, overst, wrong_stat, wrong_funcdef, noFuncHeader, noParen, noComma, nobrace, nosemi, nobracket, noifcondition, nowhilecondition};
 typedef enum errorTypes ERRORtypes;
 ERRORtypes err;
 

@@ -15,7 +15,7 @@ int isTypeConst = 0;
 extern int yylex();
 extern yyerror(char *s);
 /*yacc source for Mini C*/
-
+/*서지원 김서영 손효원 김효진*/
 %}
 
 %token TIDENT TCHAR TNUMBER TCONST TELSE TIF TEIF TINT TRETURN TVOID TWHILE
@@ -44,7 +44,7 @@ external_dcl 		: function_def
 function_def 		: function_header compound_st	
 			|function_header TSEMI	
 			|function_header error{
-			 
+			 	current_tmp->type=0;
 			 	yyerrok;
 			 	PrintError(wrong_funcdef);	/* error - wrong function definition */
 			}
@@ -85,7 +85,7 @@ function_name 	: TIDENT{
 formal_param 		: TLPAREN opt_formal_param TRPAREN
 					| TLPAREN opt_formal_param error{
 						yyerrok;
-						PrintError(noParam);	/* error - wrong function parameter */
+						PrintError(noParen);	/* error - no paranthesis */
 					};
 opt_formal_param 	: formal_param_list				
 		|						
@@ -210,6 +210,11 @@ if_st 		: TIF TLPAREN expression TRPAREN statement	%prec LOWER_THAN_ELSE
 			yyerrok;
 			PrintError(noifcondition);	/* error - no condition */
 		}
+		| TIF TLPAREN expression error
+		{
+			yyerrok;
+			PrintError(noParen);
+		}
 		;
 while_st 		: TWHILE TLPAREN expression TRPAREN statement 		
 		| TWHILE TLPAREN TRPAREN
@@ -217,8 +222,18 @@ while_st 		: TWHILE TLPAREN expression TRPAREN statement
 			yyerrok;
 			PrintError(nowhilecondition);
 		}
+		| TWHILE TLPAREN expression error
+		{
+			yyerrok;
+			PrintError(noParen);
+		}
 		;
-return_st 	: TRETURN opt_expression TSEMI			
+return_st 	: TRETURN opt_expression TSEMI
+		| TRETURN expression error
+		{
+			yyerrok;
+			PrintError(nosemi);		/* error - no semicolon */
+		}		
 		;
 expression 	: assignment_exp				
 		;
@@ -228,37 +243,127 @@ assignment_exp 	: logical_or_exp
 		| unary_exp TSUBASSIGN assignment_exp 	
 		| unary_exp TMULASSIGN assignment_exp 	
 		| unary_exp TDIVASSIGN assignment_exp 	
-		| unary_exp TMODASSIGN assignment_exp 	
+		| unary_exp TMODASSIGN assignment_exp
+		| unary_exp TASSIGN
+		{
+			yyerrok;
+			PrintError(wrong_stat);	
+		}
+		| unary_exp TADDASSIGN
+		{
+			yyerrok;
+			PrintError(wrong_stat);	
+		}
+		| unary_exp TSUBASSIGN
+		{
+			yyerrok;
+			PrintError(wrong_stat);	
+		}
+		| unary_exp TMULASSIGN
+		{
+			yyerrok;
+			PrintError(wrong_stat);	
+		}
+		| unary_exp TDIVASSIGN
+		{
+			yyerrok;
+			PrintError(wrong_stat);	
+		}
+		| unary_exp TMODASSIGN
+		{
+			yyerrok;
+			PrintError(wrong_stat);	
+		} 	
 		;
 logical_or_exp 	: logical_and_exp				
 		| logical_or_exp TOR logical_and_exp
 		| logical_or_exp TOR
 		{
 			yyerrok;
-			yyerror(wrong_stat);
+			PrintError(wrong_stat);
 		} 	
 		;
 logical_and_exp 	: equality_exp					
-		| logical_and_exp TAND equality_exp 	
+		| logical_and_exp TAND equality_exp
+		| logical_and_exp TAND
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}  	
 		;
 equality_exp 	: relational_exp				
 		| equality_exp TEQUAL relational_exp 	
-		| equality_exp TNOTEQU relational_exp 	
+		| equality_exp TNOTEQU relational_exp
+		| equality_exp TEQUAL
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| equality_exp TNOTEQU
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}  	
 		;
 relational_exp 	: additive_exp 				
 		| relational_exp TBIG additive_exp 		
 		| relational_exp TSMALL additive_exp 		
 		| relational_exp TGREATE additive_exp 	
-		| relational_exp TLESSE additive_exp 	
+		| relational_exp TLESSE additive_exp
+		| relational_exp TBIG
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| relational_exp TSMALL
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| relational_exp TGREATE
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| relational_exp TLESSE 
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}	
 		;
 additive_exp 	: multiplicative_exp				
 		| additive_exp TADD multiplicative_exp 	
-		| additive_exp TSUB multiplicative_exp 	
+		| additive_exp TSUB multiplicative_exp
+		| additive_exp TADD error
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| additive_exp TSUB error
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		} 	
 		;
 multiplicative_exp 	: unary_exp					
 		| multiplicative_exp TMUL unary_exp 		
 		| multiplicative_exp TDIV unary_exp 		
-		| multiplicative_exp TMOD unary_exp 		
+		| multiplicative_exp TMOD unary_exp
+		| multiplicative_exp TMUL error
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| multiplicative_exp TDIV error
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		}
+		| multiplicative_exp TMOD error
+		{
+			yyerrok;
+			PrintError(wrong_stat);
+		} 		
 		;
 unary_exp 	: postfix_exp					
 	   	| TSUB unary_exp				
@@ -270,7 +375,17 @@ postfix_exp 	: primary_exp
 	      	| postfix_exp TLBRACKET expression TRBRACKET 		
 	      	| postfix_exp TLPAREN opt_actual_param TRPAREN 	
 	      	| postfix_exp TINC				
-	      	| postfix_exp TDEC				
+	      	| postfix_exp TDEC
+		| postfix_exp TLBRACKET expression error
+		{
+			yyerrok;
+			PrintError(nobracket);
+		}
+		| postfix_exp TLPAREN opt_actual_param error
+		{
+			yyerrok;
+			PrintError(noParen);
+		}				
 		;
 opt_actual_param 	: actual_param				
 		|						
