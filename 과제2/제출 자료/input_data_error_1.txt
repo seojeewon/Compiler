@@ -1,8 +1,0 @@
-int main() {
-	int a;
-	// thisisdatawitherror
-	if(a>0)
-		return 1
-	else
-		return 0
-I l@ve 1emoncake && 0range !
